@@ -1,0 +1,1828 @@
+<!DOCTYPE html>
+<html lang="vi"><head><script data-bard-client-injected="true">(function(firebaseConfig, initialAuthToken, appId) {
+        window.__firebase_config = firebaseConfig;
+        window.__initial_auth_token = initialAuthToken;
+        window.__app_id = appId;
+            })("\n{\n  \"apiKey\": \"AIzaSyCqyCcs2R2e7AegGjvFAwG98wlamtbHvZY\",\n  \"authDomain\": \"bard-frontend.firebaseapp.com\",\n  \"projectId\": \"bard-frontend\",\n  \"storageBucket\": \"bard-frontend.firebasestorage.app\",\n  \"messagingSenderId\": \"175205271074\",\n  \"appId\": \"1:175205271074:web:2b7bd4d34d33bf38e6ec7b\"\n}\n","eyJhbGciOiJSUzI1NiIsImtpZCI6IjExNjRiNzdiNDMzZDdhMDAyMWI4NjE4YjhjYTU3ZTMyZGI5MWUxMTMiLCJ0eXAiOiJKV1QifQ.eyJzdWIiOiJmaXJlYmFzZS1hZG1pbnNkay1mYnN2Y0BiYXJkLWZyb250ZW5kLmlhbS5nc2VydmljZWFjY291bnQuY29tIiwiYXVkIjoiaHR0cHM6Ly9pZGVudGl0eXRvb2xraXQuZ29vZ2xlYXBpcy5jb20vZ29vZ2xlLmlkZW50aXR5LmlkZW50aXR5dG9vbGtpdC52MS5JZGVudGl0eVRvb2xraXQiLCJ1aWQiOiIxNzc3NDI5MzM1ODIyNTM3MTU2OCIsImlzcyI6ImZpcmViYXNlLWFkbWluc2RrLWZic3ZjQGJhcmQtZnJvbnRlbmQuaWFtLmdzZXJ2aWNlYWNjb3VudC5jb20iLCJjbGFpbXMiOnsiYXBwSWQiOiJjXzY0MDFmMmY1YWJhZTUzYzZfdGhpZXAtY2h1Yy1tdW5nLTIwLTExLmh0bWwtMzQxIn0sImV4cCI6MTc5NTMxOTU4NSwiaWF0IjoxNzk1MzE1OTg1LCJhbGciOiJSUzI1NiJ9.di98_R-5j6nFrQXgonN5lD_cUtT0v4B9fsMD0mg8MGie0_I0DNLYOaYO9rzEYLSvRLQP7YH3m6QQW1vNRKZuJ5e_1h0w2zq7Tek6MnBO5uQcKx2OgdCL9JVvBCCXsyNOj6M1msiWHIsQrDrHYTDWvCORByllG_nXfj5nUXKYv8Kfg4UfdSKEoMNLK_847BCXeKrF-qLqZlx_EiTwUo70KoeN71VMzIpZ2X3IizfD7mkaB-4n6g4whukUlf_xob6WujOep5Yh7MSjqh382iGqf8YE1mKDB0qHg9UhCFRWVYhxxo82NYwyDJtV6x8IVO1WWgkGS_-82ucYCzFYRf2DGQ","c_6401f2f5abae53c6_thiep-chuc-mung-20-11.html-341")</script><script data-bard-client-injected="true">
+  document.addEventListener('input', (event) => {
+    if (event.target && (event.target.isContentEditable || event.target.hasAttribute('contenteditable'))) {
+      const clonedDoc = document.cloneNode(true);
+      const injectedScripts = clonedDoc.querySelectorAll('[data-bard-client-injected="true"]');
+      injectedScripts.forEach(el => el.remove());
+      window.parent.postMessage({
+        type: 'inlineEdit',
+        html: '<!DOCTYPE html>\n' + clonedDoc.documentElement.outerHTML
+      }, '*');
+    }
+  });
+</script><script data-bard-client-injected="true">(function(){'use strict';window.addEventListener("message",a=>{a.data&&a.data.type==="SUPPLEMENTAL_DATA_UPDATE"&&window.dispatchEvent(new CustomEvent("supplementaldataupdate",{detail:a.data.data}))});}).call(this);
+</script><script data-bard-client-injected="true">(function() {
+  const SCROLL_KEYS = new Set([
+    'ArrowUp', 'ArrowDown', 'ArrowLeft', 'ArrowRight',
+    ' ', 'Spacebar', 'PageUp', 'PageDown', 'Home', 'End',
+  ]);
+  const HORIZONTAL_KEYS = new Set(['ArrowLeft', 'ArrowRight']);
+
+  function isTextEntryTarget(target) {
+    if (!target) return false;
+    const tagName = target.tagName;
+    return tagName === 'INPUT' || tagName === 'TEXTAREA' ||
+        tagName === 'SELECT' || target.isContentEditable === true;
+  }
+
+  // An element absorbs the key only if it both overflows on the axis being
+  // scrolled and is configured to scroll on that axis. The cheap dimension
+  // test runs first because getComputedStyle forces a style recalc, and this
+  // runs on every keypress. Each axis is read from its own longhand: the
+  // 'overflow' shorthand serializes as two values when the axes differ, which
+  // is the common 'overflow-x: hidden; overflow-y: auto' pane.
+  function canScroll(node, horizontal) {
+    const overflows = horizontal ? node.scrollWidth > node.clientWidth
+                                 : node.scrollHeight > node.clientHeight;
+    if (!overflows) return false;
+    const style = window.getComputedStyle(node);
+    const overflow = horizontal ? style.overflowX : style.overflowY;
+    return overflow === 'auto' || overflow === 'scroll';
+  }
+
+  // Walks up from the event target so nested scrollers keep their behavior.
+  // <body> is included because pages that pin the root height make it the
+  // scroll container.
+  function hasScrollableAncestor(target, horizontal) {
+    let node = target;
+    while (node && node !== document.documentElement) {
+      if (canScroll(node, horizontal)) return true;
+      node = node.parentElement;
+    }
+    return false;
+  }
+
+  function rootCanScroll(horizontal) {
+    const scroller = document.scrollingElement || document.documentElement;
+    if (!scroller) return false;
+    // Tolerate a pixel of rounding so subpixel layouts do not look scrollable.
+    return horizontal ? scroller.scrollWidth > window.innerWidth + 1
+                      : scroller.scrollHeight > window.innerHeight + 1;
+  }
+
+  window.addEventListener('keydown', function(event) {
+    if (!SCROLL_KEYS.has(event.key)) return;
+    if (event.defaultPrevented) return;
+    // Alt and Meta turn arrows into browser history navigation, and Ctrl is
+    // reserved for shortcuts, so none of them are scroll intent.
+    if (event.altKey || event.metaKey || event.ctrlKey) return;
+
+    const target = event.target;
+    if (isTextEntryTarget(target)) return;
+
+    // Anything that can still absorb the scroll gets to keep it.
+    const horizontal = HORIZONTAL_KEYS.has(event.key);
+    if (rootCanScroll(horizontal)) return;
+    if (hasScrollableAncestor(target, horizontal)) return;
+
+    event.preventDefault();
+  }, {capture: true, passive: false});
+})();</script><script data-bard-client-injected="true">(function() {
+  // Ensure this script is executed only once
+  if (window.firebaseAuthBridgeScriptLoaded) {
+    return;
+  }
+  window.firebaseAuthBridgeScriptLoaded = true;
+
+  let nextTokenPromiseId = 0;
+
+  // Stores { resolve, reject } for ongoing token requests
+  const pendingTokenPromises = {};
+
+  // Listen for messages from the Host Application
+  window.addEventListener('message', function(event) {
+
+    const messageData = event.data;
+
+  if (messageData && messageData.type === 'RESOLVE_NEW_FIREBASE_TOKEN') {
+      const { success, token, error, promiseId } = messageData ?? {};
+      if (pendingTokenPromises[promiseId]) {
+        if (success) {
+          pendingTokenPromises[promiseId].resolve(token);
+        } else {
+          pendingTokenPromises[promiseId].reject(new Error(error || 'Token refresh failed from host.'));
+        }
+        delete pendingTokenPromises[promiseId];
+      }
+    }
+  });
+
+  // Expose a function for the Generated App to request a new Firebase token
+  window.requestNewFirebaseToken = function() {
+    const currentPromiseId = nextTokenPromiseId++;
+    const promise = new Promise((resolve, reject) => {
+      pendingTokenPromises[currentPromiseId] = { resolve, reject };
+    });
+    if (window.parent && window.parent !== window) {
+      window.parent.postMessage({
+        type: 'REQUEST_NEW_FIREBASE_TOKEN',
+        promiseId: currentPromiseId
+      }, '*');
+    } else {
+      pendingTokenPromises[currentPromiseId].reject(new Error('No parent window to request token from.'));
+      delete pendingTokenPromises[currentPromiseId];
+    }
+    return promise;
+  };
+})();</script><script data-bard-client-injected="true">
+let realOriginalGetUserMedia = null;
+if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+  realOriginalGetUserMedia = navigator.mediaDevices.getUserMedia.bind(navigator.mediaDevices);
+}
+
+(function() {
+  if (navigator.mediaDevices && navigator.mediaDevices.__proto__) {
+    try {
+      Object.defineProperty(navigator.mediaDevices.__proto__, 'getUserMedia', {
+        get: function() {
+          return undefined; // Or throw an error
+        },
+        configurable: false
+      });
+    } catch (error) {
+      console.error("Error defining prototype getter:", error);
+    }
+  }
+})();
+
+(function() {
+  const pendingMediaResolvers = {};
+  let nextMediaPromiseId = 0;
+
+  function requestMediaPermissions(constraints) {
+    const mediaPromiseId = nextMediaPromiseId++;
+    const promise = new Promise((resolve, reject) => {
+      pendingMediaResolvers[mediaPromiseId] = (granted) => {
+        delete pendingMediaResolvers[mediaPromiseId];
+        resolve(granted);
+      };
+    });
+
+    window.parent.postMessage({
+      type: 'requestMediaPermission',
+      constraints: constraints,
+      promiseId: mediaPromiseId,
+    }, '*');
+
+    return promise;
+  }
+
+  let originalGetUserMedia = realOriginalGetUserMedia;
+
+  function interceptGetUserMedia() {
+    if (navigator.mediaDevices) {
+      Object.defineProperty(navigator.mediaDevices, 'getUserMedia', {
+        value: function(constraints) {
+          return requestMediaPermissions(constraints).then((granted) => {
+            if (granted) {
+              if (originalGetUserMedia) {
+                return originalGetUserMedia(constraints);
+              } else {
+                throw new Error("Original getUserMedia not available.");
+              }
+            } else {
+              throw new DOMException('Permission denied', 'NotAllowedError');
+            }
+          });
+        },
+        writable: false,
+        configurable: false
+      });
+    }
+  }
+
+  interceptGetUserMedia();
+
+  const observer = new MutationObserver(function(mutationsList, observer) {
+    for (const mutation of mutationsList) {
+      if (mutation.type === 'reconfigured' && mutation.name === 'getUserMedia' && mutation.object === navigator.mediaDevices) {
+        interceptGetUserMedia();
+      } else if (mutation.type === 'attributes' && mutation.attributeName === 'getUserMedia' && mutation.target === navigator.mediaDevices) {
+        interceptGetUserMedia();
+      } else if (mutation.type === 'childList' && mutation.addedNodes) {
+        mutation.addedNodes.forEach(node => {
+          if (node === navigator.mediaDevices) {
+            interceptGetUserMedia();
+          }
+        });
+      }
+    }
+  });
+
+  function interceptSpeechRecognition() {
+    if (!window.SpeechRecognition && !window.webkitSpeechRecognition) {
+      return;
+    }
+
+    const OriginalSpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+
+    const SpeechRecognitionWrapper = function(...args) {
+      const recognizer = new OriginalSpeechRecognition(...args);
+      const originalStart = recognizer.start.bind(recognizer);
+
+      recognizer.start = function() {
+        requestMediaPermissions({ audio: true }).then(granted => {
+          if (granted) {
+            originalStart();
+          } else {
+            const errorEvent = new SpeechRecognitionErrorEvent('error');
+            errorEvent.error = 'not-allowed'; // This is the standard error for permission denial.
+            recognizer.dispatchEvent(errorEvent);
+          }
+        });
+      };
+
+      return recognizer;
+    };
+
+    SpeechRecognitionWrapper.prototype = OriginalSpeechRecognition.prototype;
+    SpeechRecognitionWrapper.prototype.constructor = SpeechRecognitionWrapper;
+
+    if (window.SpeechRecognition) {
+      window.SpeechRecognition = SpeechRecognitionWrapper;
+    }
+    if (window.webkitSpeechRecognition) {
+      window.webkitSpeechRecognition = SpeechRecognitionWrapper;
+    }
+  }
+
+  interceptSpeechRecognition();
+
+  window.addEventListener('message', function(event) {
+    if (event.data) {
+      if (event.data.type === 'resolveMediaPermission') {
+        const { promiseId, granted } = event.data;
+        if (pendingMediaResolvers[promiseId]) {
+          pendingMediaResolvers[promiseId](granted);
+        }
+      }
+    }
+  });
+
+})();</script><script ws-interception-config="{&quot;parentOrigin&quot;:&quot;https://gemini.google.com&quot;,&quot;proxiedDomains&quot;:[]}" data-bard-client-injected="true">(function(){'use strict';var u=typeof Object.defineProperties=="function"?Object.defineProperty:function(b,d,e){if(b==Array.prototype||b==Object.prototype)return b;b[d]=e.value;return b};function v(b){b=["object"==typeof globalThis&&globalThis,b,"object"==typeof window&&window,"object"==typeof self&&self,"object"==typeof global&&global];for(var d=0;d<b.length;++d){var e=b[d];if(e&&e.Math==Math)return e}throw Error("Cannot find global object");}var w=v(this);
+function y(b,d){if(d)a:{var e=w;b=b.split(".");for(var h=0;h<b.length-1;h++){var k=b[h];if(!(k in e))break a;e=e[k]}b=b[b.length-1];h=e[b];d=d(h);d!=h&&d!=null&&u(e,b,{configurable:!0,writable:!0,value:d})}}function z(b){function d(h){return b.next(h)}function e(h){return b.throw(h)}return new Promise(function(h,k){function m(n){n.done?h(n.value):Promise.resolve(n.value).then(d,e).then(m,k)}m(b.next())})}y("globalThis",function(b){return b||w});/*
+
+ Copyright The Closure Library Authors.
+ SPDX-License-Identifier: Apache-2.0
+*/
+function A(b,d){function e(){}e.prototype=d.prototype;b.i=d.prototype;b.prototype=new e;b.prototype.constructor=b;b.h=function(h,k,m){for(var n=Array(arguments.length-2),p=2;p<arguments.length;p++)n[p-2]=arguments[p];return d.prototype[k].apply(h,n)}};function B(b,d,e="*"){function h(a){if(typeof a==="string")return F.encode(a).buffer;if(a instanceof ArrayBuffer)return a.slice(0);if(ArrayBuffer.isView(a))return a.buffer.slice(a.byteOffset,a.byteOffset+a.byteLength);throw Error("Invalid data type");}function k(a){a=h(a);var f={type:"send",data:new Uint8Array(a)},g;(g=r)==null||g.postMessage(f,[a])}function m(){if(!r)throw Error("Data port not captured yet.");r.onmessage=a=>{if(a.data.type==="message"){a=new MessageEvent("message",{data:G.decode(a.data.data)});
+let f;(f=c.onmessage)==null||f.call(c,a);c.dispatchEvent(a)}}}function n(){if(!t)throw Error("Control port not captured yet.");t.onmessage=a=>{switch(a.data.type){case "open":l=1;var f=new Event("open"),g;(g=c.onopen)==null||g.call(c,f);c.dispatchEvent(f);q.forEach(H=>{k(H)});q=[];break;case "close":g=a.data;l=3;g=new CloseEvent("close",{code:g.code,reason:g.reason,wasClean:g.wasClean});(f=c.onclose)==null||f.call(c,g);c.dispatchEvent(g);break;case "error":l=3;f=new Event("error");let x;(x=c.onerror)==
+null||x.call(c,f);c.dispatchEvent(f)}}}function p(a){return z(function*(){var f=new MessageChannel;t=f.port1;var g=new MessageChannel;r=g.port1;n();m();window.parent.postMessage({type:"websocket_open",portOrdering:["control","data"],url:b,protocols:a||[],connectionId:I},e,[f.port2,g.port2])}())}var c=Reflect.construct(EventTarget,[],new.target);c.CONNECTING=0;c.OPEN=1;c.CLOSING=2;c.CLOSED=3;c.url=b;c.binaryType="arraybuffer";c.protocol="";c.extensions="";var l=0,t=null,r=null,q=[],F=new TextEncoder,
+G=new TextDecoder;c.onopen=null;c.onmessage=null;c.onclose=null;c.onerror=null;Object.defineProperty(c,"readyState",{get:()=>l,enumerable:!0,configurable:!0});Object.defineProperty(c,"bufferedAmount",{get:()=>{var a=0;q.forEach(f=>{a+=typeof f==="string"?f.length:f.byteLength});return a},enumerable:!0,configurable:!0});var I=function(){var a;return((a=globalThis.crypto)==null?0:a.randomUUID)?globalThis.crypto.randomUUID():"xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g,f=>{var g=Math.random()*
+16|0;return(f==="x"?g:g&3|8).toString(16)})}();c.send=a=>{if(l===1)a instanceof Blob?a.arrayBuffer().then(f=>{k(f)}):k(a);else if(l===0)if(typeof a==="string")q.push(a);else if(a instanceof ArrayBuffer||ArrayBuffer.isView(a))q.push(h(a));else throw Error("Sending Blob is not supported before the connection is open.");else console.debug("WebSocket send called in CLOSING or CLOSED state; ignored.")};c.close=(a=1E3,f="")=>{if(l!==2&&l!==3){l=2;a={type:"close",code:a,reason:f,wasClean:a===1E3};var g;
+(g=t)==null||g.postMessage(a)}};Promise.resolve().then(()=>p(d));return c}A(B,EventTarget);var C=document.currentScript,D=C==null?void 0:C.getAttribute("ws-interception-config");if(!D)throw Error("WebSocket Interceptor: Missing ws-interception-config attribute in the script tag.");var E=JSON.parse(D);if(!E.parentOrigin||typeof E.parentOrigin!=="string")throw Error("WebSocket Interceptor: Invalid parentOrigin in ws-interception-config");
+(function(b){var d=Object.getOwnPropertyDescriptor(window,"WebSocket");if(!d||d.writable||d.configurable)d=Object.assign(function(e,h){try{let k=(new URL(e)).hostname;if(b.proxiedDomains.some(m=>k===m||k.endsWith(`.${m}`)))return new B(e,h,b.parentOrigin)}catch(k){throw window.parent.postMessage({type:"websocket_blocked",url:e,reason:"blocked_invalid_url"},b.parentOrigin),new DOMException(`WebSocket connection to '${e}' is not allowed in Canvas.`,"SecurityError");}window.parent.postMessage({type:"websocket_blocked",
+url:e,reason:"blocked_domain_not_allowlisted"},b.parentOrigin);throw new DOMException(`WebSocket connection to '${e}' is not allowed in Canvas.`,"SecurityError");},{CONNECTING:0,OPEN:1,CLOSING:2,CLOSED:3}),Object.defineProperty(window,"WebSocket",{value:d,writable:!1,configurable:!1})})({proxiedDomains:E.proxiedDomains||[],parentOrigin:E.parentOrigin});}).call(this);
+</script><script data-bard-client-injected="true">((function(modelInformation) {
+  const originalFetch = window.fetch;
+  // TODO: b/421908508 - Move these out of the script and match all generative AI model calls.
+  let googleLlmBaseApiUrls = [
+    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.textModelName + ':streamGenerateContent',
+    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.textModelName + ':generateContent',
+    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.imageModelName + ':predict',
+    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.imageModelName + ':predictLongRunning',
+    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.imageEditModelName + ':generateContent',
+    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.imageTransformModelName + ':generateContent',
+    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.videoModelName + ':predict',
+    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.videoModelName + ':predictLongRunning',
+    'https://generativelanguage.googleapis.com/v1beta/models/' + modelInformation.ttsModelName + ':generateContent',
+  ];
+  modelInformation.deprecatedTextModelNames.forEach((modelName) => {
+    googleLlmBaseApiUrls.push(
+      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':streamGenerateContent',
+      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':generateContent',
+    );
+  });
+  modelInformation.deprecatedImageModelNames.forEach((modelName) => {
+    googleLlmBaseApiUrls.push(
+      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':predict',
+      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':predictLongRunning',
+      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':generateContent',
+      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':streamGenerateContent',
+    );
+  });
+  modelInformation.deprecatedGenerateImageModelNames.forEach((modelName) => {
+    googleLlmBaseApiUrls.push(
+      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':generateContent',
+      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':streamGenerateContent',
+    );
+  });
+  modelInformation.deprecatedImageTransformModelNames.forEach((modelName) => {
+    googleLlmBaseApiUrls.push(
+      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':generateContent',
+      'https://generativelanguage.googleapis.com/v1beta/models/' + modelName + ':streamGenerateContent',
+    );
+  });
+
+  const pendingFetchResolvers = {};
+  let nextPromiseId = 0;
+
+  function handleStringInput(input, optionsArgument) {
+    const actualUrl = input;
+    const fetchCallArgs = [actualUrl, optionsArgument];
+    const effectiveOptions = optionsArgument || {};
+    const bodyForApiKeyCheck = effectiveOptions.body;
+    const bodyForPostMessage = effectiveOptions.body;
+    return { actualUrl, fetchCallArgs, effectiveOptions, bodyForApiKeyCheck, bodyForPostMessage };
+  }
+
+  function handleRequestInput(input, optionsArgument) {
+    const actualUrl = input.url;
+    const fetchCallArgs = [input, optionsArgument];
+    const effectiveOptions = { method: input.method, headers: new Headers(input.headers) };
+    let bodyForApiKeyCheck;
+    let bodyForPostMessage;
+
+    if (optionsArgument) {
+      if (optionsArgument.method) effectiveOptions.method = optionsArgument.method;
+      if (optionsArgument.headers) effectiveOptions.headers = new Headers(optionsArgument.headers);
+      if ('body' in optionsArgument) {
+        bodyForApiKeyCheck = optionsArgument.body;
+        bodyForPostMessage = optionsArgument.body;
+      } else {
+        bodyForApiKeyCheck = undefined;
+        bodyForPostMessage = input.body;
+      }
+    } else {
+      bodyForApiKeyCheck = undefined;
+      bodyForPostMessage = input.body;
+    }
+    return { actualUrl, fetchCallArgs, effectiveOptions, bodyForApiKeyCheck, bodyForPostMessage };
+  }
+
+  window.fetch = function(input, optionsArgument) {
+    let actualUrl;
+    let fetchCallArgs;
+    let effectiveOptions = {};
+    let bodyForApiKeyCheck;
+    let bodyForPostMessage;
+
+    if (typeof input === 'string') {
+      ({actualUrl, fetchCallArgs, effectiveOptions, bodyForApiKeyCheck, bodyForPostMessage} = handleStringInput(input, optionsArgument));
+    } else if (input instanceof Request) {
+      ({actualUrl, fetchCallArgs, effectiveOptions, bodyForApiKeyCheck, bodyForPostMessage} = handleRequestInput(input, optionsArgument));
+    } else {
+      return originalFetch.apply(window, [input, optionsArgument]);
+    }
+
+    effectiveOptions.method = effectiveOptions.method || 'GET';
+    if (!effectiveOptions.headers) {
+      effectiveOptions.headers = new Headers();
+    }
+
+
+    if (typeof actualUrl === 'string' && googleLlmBaseApiUrls.some((url) => actualUrl.startsWith(url))) {
+      let apiKeyIsNull = true;
+
+      const regex = new RegExp("models/([^:]+)");
+      const modelNameMatch = actualUrl.match(regex);
+      const modelName = modelNameMatch ? modelNameMatch[1] : 'unspecified';
+
+
+      try {
+        const urlObject = new URL(actualUrl);  // Use URL object for robust parsing
+        const apiKeyParam = urlObject.searchParams.get('key');
+        if (apiKeyParam) {
+          apiKeyIsNull = false;
+        }
+      } catch (e) {
+        // Continue checks even if URL parsing fails
+      }
+
+      if (apiKeyIsNull && effectiveOptions.headers) {
+        const h = new Headers(effectiveOptions.headers);
+        const apiKeyHeaderValue = h.get('X-API-Key') || h.get('x-api-key');
+        if (apiKeyHeaderValue) {
+          apiKeyIsNull = false;
+          return originalFetch.apply(window, fetchCallArgs);
+        }
+      }
+
+      if (apiKeyIsNull && effectiveOptions.method && ['POST', 'PUT', 'PATCH'].includes(effectiveOptions.method.toUpperCase()) && typeof bodyForApiKeyCheck === 'string') {
+        try {
+          const bodyData = JSON.parse(bodyForApiKeyCheck);
+          if (bodyData && bodyData.apiKey) {
+            apiKeyIsNull = false;
+            return originalFetch.apply(window, fetchCallArgs);
+          }
+        } catch (e) {
+          // Ignore JSON parsing errors
+        }
+      }
+
+      if(apiKeyIsNull) {
+        const promiseId = nextPromiseId++;
+        const promise = new Promise((resolve) => {
+          pendingFetchResolvers[promiseId] = (resolvedResponse) => {
+            delete pendingFetchResolvers[promiseId];
+            resolve(resolvedResponse);
+          };
+        });
+
+        let serializedBodyForPostMessage;
+        if (typeof bodyForPostMessage === 'string' || bodyForPostMessage == null) {
+            serializedBodyForPostMessage = bodyForPostMessage;
+        } else if (bodyForPostMessage instanceof ReadableStream) {
+            serializedBodyForPostMessage = null;
+        } else {
+            try {
+                serializedBodyForPostMessage = JSON.stringify(bodyForPostMessage);
+            } catch (e) {
+                serializedBodyForPostMessage = null;
+            }
+        }
+
+        const messageOptions = {
+            method: effectiveOptions.method,
+            headers: Object.fromEntries(new Headers(effectiveOptions.headers).entries()),
+            body: serializedBodyForPostMessage
+        };
+
+        window.parent.postMessage({
+          type: 'requestFetch',
+          url: actualUrl,
+          modelName: modelName,
+          options: messageOptions,
+          promiseId: promiseId,
+        }, '*');
+
+        return promise;
+      }
+      return originalFetch.apply(window, fetchCallArgs);
+    }
+    return originalFetch.apply(window, fetchCallArgs);
+  };
+
+  window.addEventListener('message', function(event) {
+    if (event.data && event.data.type === 'resolveFetch') {
+      const { promiseId, response } = event.data;
+      if (pendingFetchResolvers[promiseId]) {
+        try {
+          const reconstructedResponse = new Response(response.body, {
+            status: response.status,
+            statusText: response.statusText,
+            headers: new Headers(response.headers),
+          });
+          pendingFetchResolvers[promiseId](reconstructedResponse);
+        } catch (error) {
+          pendingFetchResolvers[promiseId](new Response(null, { status: 500, statusText: "Interceptor Response Reconstruction Error" }));
+        }
+      }
+    }
+  });
+
+}))({"textModelName":"gemini-3-flash-preview","imageModelName":"imagen-4.0-generate-001","imageEditModelName":"gemini-3.1-flash-image","imageTransformModelName":"gemini-3-pro-image","videoModelName":"veo-2.0-generate-001","ttsModelName":"gemini-2.5-flash-preview-tts","deprecatedTextModelNames":["gemini-2.0-flash","gemini-2.5-flash","gemini-2.5-flash-preview-04-17","gemini-2.5-flash-preview-05-20","gemini-2.5-flash-preview-09-2025"],"deprecatedImageModelNames":["imagen-3.0-generate-001","imagen-3.0-generate-002"],"deprecatedGenerateImageModelNames":["gemini-2.5-flash-image-preview","gemini-2.5-flash-image","gemini-3.1-flash-image-preview"],"deprecatedImageTransformModelNames":["gemini-3-pro-image-preview-11-2025"]})</script><script data-bard-client-injected="true">(function() {
+  const OVERLAY_SELECTOR =
+    'dialog[open], [role="dialog"], [role="alertdialog"], [role="menu"], [role="listbox"], [role="combobox"]';
+
+  function isVisibleOverlay(element) {
+    if (element.closest('[hidden], [aria-hidden="true"], [inert]')) {
+      return false;
+    }
+    if (window.getComputedStyle(element).visibility === 'hidden') {
+      return false;
+    }
+    for (let cur = element; cur; cur = cur.parentElement) {
+      if (window.getComputedStyle(cur).display === 'none') {
+        return false;
+      }
+    }
+    return true;
+  }
+
+  function hasOpenOverlay() {
+    const candidates = document.querySelectorAll(OVERLAY_SELECTOR);
+    for (let i = 0; i < candidates.length; i++) {
+      if (isVisibleOverlay(candidates[i])) {
+        return true;
+      }
+    }
+    try {
+      if (document.querySelector('[popover]:popover-open')) {
+        return true;
+      }
+    } catch (e) {
+      // Ignore engines that do not support :popover-open.
+    }
+    return false;
+  }
+
+  function isNonEmptySearchInput(target) {
+    return (
+      Boolean(target) &&
+      target.tagName === 'INPUT' &&
+      typeof target.type === 'string' &&
+      target.type.toLowerCase() === 'search' &&
+      typeof target.value === 'string' &&
+      target.value.length > 0
+    );
+  }
+
+  function shouldIgnoreEscape(event) {
+    return (
+      event.key !== 'Escape' ||
+      event.altKey ||
+      event.ctrlKey ||
+      event.metaKey ||
+      event.shiftKey ||
+      event.isComposing ||
+      event.repeat ||
+      event.keyCode === 229 ||
+      isNonEmptySearchInput(event.target)
+    );
+  }
+
+  let shouldIgnoreCaptureState = false;
+
+  window.addEventListener(
+    'keydown',
+    function(event) {
+      if (event.key === 'Escape') {
+        shouldIgnoreCaptureState =
+          hasOpenOverlay() || isNonEmptySearchInput(event.target);
+      }
+    },
+    {capture: true},
+  );
+
+  window.addEventListener('keydown', function(event) {
+    if (
+      shouldIgnoreEscape(event) ||
+      event.defaultPrevented ||
+      shouldIgnoreCaptureState
+    ) {
+      return;
+    }
+    const wasBlockedOnCapture = shouldIgnoreCaptureState;
+    queueMicrotask(function() {
+      if (event.defaultPrevented || wasBlockedOnCapture) {
+        return;
+      }
+      if (window.parent && window.parent !== window) {
+        window.parent.postMessage({'type': 'escapeKey'}, '*');
+      }
+    });
+  });
+})();</script><script data-bard-client-injected="true">(function() {
+  function normalizeSlug(str) {
+    try {
+      return str
+        .trim()
+        .toLowerCase()
+        .replace(/[^p{L}p{N}s_-]/gu, '')
+        .replace(/s+/g, '-');
+    } catch (e) {
+      return str
+        .trim()
+        .toLowerCase()
+        .replace(/[^a-z0-9s_-]/g, '')
+        .replace(/s+/g, '-');
+    }
+  }
+
+  function findTargetElement(hash) {
+    if (!hash || hash === '#') {
+      return null;
+    }
+    const rawId = hash.startsWith('#') ? hash.slice(1) : hash;
+    let decodedId = rawId;
+    try {
+      decodedId = decodeURIComponent(rawId);
+    } catch (e) {
+      // Ignore URI malformed errors.
+    }
+
+    // 1. Direct ID match (raw and decoded).
+    let target = document.getElementById(rawId) || document.getElementById(decodedId);
+    if (target) {
+      return target;
+    }
+
+    // 2. Name attribute match (<a name="...">).
+    try {
+      if (typeof CSS !== 'undefined' && CSS.escape) {
+        target =
+          document.querySelector('[name="' + CSS.escape(rawId) + '"]') ||
+          document.querySelector('[name="' + CSS.escape(decodedId) + '"]');
+      } else {
+        const namedElements = document.getElementsByName(rawId);
+        if (namedElements && namedElements.length > 0) {
+          return namedElements[0];
+        }
+      }
+    } catch (e) {
+      // Ignore querySelector syntax errors.
+    }
+    if (target) {
+      return target;
+    }
+
+    // 3. Match heading text by slug (for Markdown TOCs where headings lack explicit IDs).
+    const targetSlug = normalizeSlug(decodedId);
+    if (targetSlug) {
+      for (const heading of document.querySelectorAll('h1, h2, h3, h4, h5, h6')) {
+        if (normalizeSlug(heading.textContent || '') === targetSlug) {
+          return heading;
+        }
+      }
+    }
+
+    return null;
+  }
+
+  document.addEventListener('click', function(event) {
+    const target = event.target;
+    const anchor = target && typeof target.closest === 'function' ? target.closest('a') : null;
+    if (!anchor) {
+      return;
+    }
+
+    const href = anchor.getAttribute('href');
+    if (
+      !href ||
+      href.trim().toLowerCase().startsWith('javascript:') ||
+      anchor.hasAttribute('download')
+    ) {
+      return;
+    }
+
+    // Check if the link is an in-page hash / anchor link.
+    if (href.startsWith('#')) {
+      event.preventDefault();
+      const targetElement = findTargetElement(href);
+      if (targetElement) {
+        targetElement.scrollIntoView({behavior: 'smooth', block: 'start'});
+      }
+      return;
+    }
+
+    // Check if the URL has the same origin/pathname but with a hash.
+    try {
+      const url = new URL(anchor.href, window.location.href);
+      if (
+        url.hash &&
+        url.origin === window.location.origin &&
+        url.pathname === window.location.pathname
+      ) {
+        event.preventDefault();
+        const targetElement = findTargetElement(url.hash);
+        if (targetElement) {
+          targetElement.scrollIntoView({behavior: 'smooth', block: 'start'});
+        }
+        return;
+      }
+    } catch (e) {
+      // Fall through if URL parsing fails.
+    }
+
+    // For all external or full navigation links, prevent iframe-level navigation
+    // (which breaks in AGSA WebView or sandboxed iframes) and ensure they open
+    // safely in a new tab/window.
+    if (anchor.target !== '_blank') {
+      event.preventDefault();
+      window.open(anchor.href, '_blank', 'noopener,noreferrer');
+    }
+  }, {capture: true});
+})();</script><script data-bard-client-injected="true">(function(){'use strict';function a(){window.parent.postMessage({type:"interaction"},"*")}window.addEventListener("click",a,{capture:!0,passive:!0});window.addEventListener("touchstart",a,{capture:!0,passive:!0});window.addEventListener("keydown",a,{capture:!0,passive:!0});}).call(this);
+</script><script data-bard-client-injected="true">(function() {
+  const originalConsoleLog = console.log;
+  const originalConsoleError = console.error;
+
+    /**
+   * Normalizes an error event or a promise rejection reason into a structured error object.
+   * @param {*} errorEventOrReason The error object or reason.
+   * @return {object} Structured error data { message, name, stack }.
+   */
+  function getErrorObject(errorEventOrReason) {
+    if (errorEventOrReason instanceof Error) {
+      return {
+        message: errorEventOrReason.message,
+        name: errorEventOrReason.name,
+        stack: errorEventOrReason.stack,
+      };
+    }
+    // Fallback for non-Error objects.
+    try {
+      return {
+        message: JSON.stringify(errorEventOrReason),
+        name: 'UnknownErrorType',
+        stack: null,
+      };
+    } catch (e) {
+      return {
+        message: String(errorEventOrReason),
+        name: 'UnknownErrorTypeNonStringifiable',
+        stack: null,
+      };
+    }
+  }
+
+  /**
+   * Converts an array of arguments (from log/error) into a single string.
+   * Handles Error objects specially to include their message and stack.
+   * @param {Array<*>} args - Arguments passed to console methods.
+   * @return {string} A string representation of the arguments.
+   */
+  function stringifyArgs(args) {
+    return args
+      .map((arg) => {
+        if (arg instanceof Error) {
+          const {message, stack} = arg;
+          return `Error: ${message}${stack ? ('\nStack: ' + stack) : ''}`;
+        }
+        if (typeof arg === 'object' && arg !== null) {
+          try {
+            return JSON.stringify(arg);
+          } catch (error) {
+            return '[Circular Object]';
+          }
+        } else {
+          return String(arg);
+        }
+      })
+      .join(' ');
+  }
+
+  console.log = function(...args) {
+    const logString = stringifyArgs(args);
+    window.parent.postMessage({ type: 'log', message: logString }, '*');
+    originalConsoleLog.apply(console, args);
+  };
+
+  console.error = function(...args) {
+    let errorData;
+    if (args.length > 0 && args[0] instanceof Error) {
+      const err = args[0];
+      // If the first arg is an Error, capture its details.
+      errorData = {
+        type: 'error',
+        source: 'CONSOLE_ERROR',
+        ...getErrorObject(err),
+        rawArgsString: stringifyArgs(args.slice(1)),
+        timestamp: new Date().toISOString(),
+      };
+    } else {
+      // If not an Error object, treat all args as a general error message.
+      errorData = {
+        type: 'error',
+        source: 'CONSOLE_ERROR',
+        message: stringifyArgs(args),
+        name: 'ConsoleLoggedError',
+        stack: null,
+        timestamp: new Date().toISOString(),
+      };
+    }
+    window.parent.postMessage(errorData, '*');
+    originalConsoleError.apply(console, args);
+  };
+
+  // Listen for global unhandled synchronous errors.
+  window.addEventListener('error', function(event) {
+    const errorDetails = event.error ? getErrorObject(event.error) : {
+      message: event.message,
+      name: 'GlobalError',
+      stack: null,
+      filename: event.filename,
+      lineno: event.lineno,
+      colno: event.colno,
+    };
+
+    window.parent.postMessage({
+      type: 'error',
+      source: 'global',
+      ...errorDetails,
+      message: errorDetails.message || event.message,
+      timestamp: new Date().toISOString(),
+    }, '*');
+  });
+
+  // Listen for unhandled promise rejections (asynchronous errors).
+  window.addEventListener('unhandledrejection', function(event) {
+    const errorDetails = getErrorObject(event.reason);
+
+    window.parent.postMessage({
+      type: 'error',
+      source: 'unhandledrejection',
+      ...errorDetails,
+      message: errorDetails.message || 'Unhandled Promise Rejection',
+      timestamp: new Date().toISOString(),
+    }, '*');
+  });
+
+})();</script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thiệp Tri Ân Thầy Cô - Chào Mừng Ngày Nhà Giáo Việt Nam 20/11</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Playfair Display, Cormorant Garamond, Dancing Script, Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&amp;family=Dancing+Script:wght@600;700&amp;family=Inter:wght@300;400;500;600&amp;family=Playfair+Display:ital,wght@0,600;0,700;1,600&amp;display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        paper: '#FAF5EB',
+                        paperDark: '#F0E6D2',
+                        crimson: '#8B1E24',
+                        crimsonDark: '#631217',
+                        gold: '#C6934B',
+                        goldLight: '#E5C384',
+                        chalkboard: '#22332B',
+                        ink: '#2C241E'
+                    },
+                    fontFamily: {
+                        serif: ['"Playfair Display"', 'serif'],
+                        editorial: ['"Cormorant Garamond"', 'serif'],
+                        script: ['"Dancing Script"', 'cursive'],
+                        sans: ['"Inter"', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Nền giấy dó và họa tiết tinh tế */
+        body {
+            background-color: #1A2620;
+            background-image: 
+                radial-gradient(circle at 20% 20%, rgba(198, 147, 75, 0.12) 0%, transparent 45%),
+                radial-gradient(circle at 80% 80%, rgba(139, 30, 36, 0.18) 0%, transparent 50%),
+                repeating-linear-gradient(45deg, rgba(255,255,255,0.015) 0px, rgba(255,255,255,0.015) 2px, transparent 2px, transparent 8px);
+            color: #2C241E;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        /* Chất liệu giấy dó cổ điển cho thiệp */
+        .giay-do-texture {
+            background-color: #FAF5EB;
+            background-image: 
+                radial-gradient(rgba(198, 147, 75, 0.08) 1px, transparent 0),
+                radial-gradient(rgba(139, 30, 36, 0.04) 1px, transparent 0),
+                linear-gradient(to bottom right, rgba(255,255,255,0.7), rgba(240, 230, 210, 0.5));
+            background-size: 24px 24px, 37px 37px, 100% 100%;
+            background-position: 0 0, 13px 17px, 0 0;
+        }
+
+        /* Viền vàng đồng sang trọng */
+        .gold-border-frame {
+            border: 1.5px solid rgba(198, 147, 75, 0.55);
+            box-shadow: inset 0 0 0 4px #FAF5EB, inset 0 0 0 5.5px rgba(198, 147, 75, 0.35);
+        }
+
+        /* Không gian 3D cho thiệp */
+        .perspective-container {
+            perspective: 2200px;
+        }
+
+        .card-3d-wrapper {
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 1.2s cubic-bezier(0.25, 1, 0.35, 1);
+        }
+
+        /* Bìa trước của thiệp (Mở lật sang trái trên desktop, lật lên hoặc mở ra mượt mà) */
+        .card-front-cover {
+            transform-origin: left center;
+            transition: transform 1.35s cubic-bezier(0.28, 0.85, 0.32, 1), opacity 0.6s ease 0.7s;
+            backface-visibility: hidden;
+            z-index: 30;
+        }
+
+        /* Mặt sau của bìa trước (hiện ra khi lật mở) */
+        .card-front-backface {
+            transform-origin: left center;
+            transform: rotateY(0deg);
+            transition: transform 1.35s cubic-bezier(0.28, 0.85, 0.32, 1);
+            z-index: 25;
+        }
+
+        /* Trạng thái đã mở thiệp */
+        .card-opened .card-front-cover {
+            transform: rotateY(-165deg);
+            pointer-events: none;
+        }
+
+        @media (max-width: 768px) {
+            /* Trên màn hình nhỏ, lật bìa lên trên hoặc thu gọn mượt mà để tối ưu diện tích đọc */
+            .card-front-cover {
+                transform-origin: top center;
+                transition: transform 1.1s cubic-bezier(0.28, 0.85, 0.32, 1), opacity 0.5s ease 0.55s;
+            }
+            .card-opened .card-front-cover {
+                transform: rotateX(175deg);
+                opacity: 0;
+                pointer-events: none;
+            }
+        }
+
+        /* Con dấu sáp đỏ (Wax Seal) */
+        .wax-seal {
+            background: radial-gradient(circle at 35% 35%, #B82931, #8B1E24 60%, #580D11 100%);
+            box-shadow: 
+                0 6px 15px rgba(0, 0, 0, 0.4),
+                inset 0 2px 4px rgba(255, 215, 160, 0.45),
+                inset 0 -3px 6px rgba(40, 5, 8, 0.7);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .wax-seal:hover {
+            transform: scale(1.06);
+            box-shadow: 
+                0 10px 22px rgba(198, 147, 75, 0.45),
+                inset 0 2px 5px rgba(255, 225, 180, 0.6);
+        }
+
+        /* Hiệu ứng chữ ánh vàng nhẹ */
+        .gold-foil-text {
+            background: linear-gradient(135deg, #B57E32 0%, #E7C686 45%, #A66E24 75%, #DFBA74 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Hiệu ứng sóng nhạc */
+        @keyframes soundBar {
+            0%, 100% { height: 4px; }
+            50% { height: 16px; }
+        }
+        .music-playing .bar-1 { animation: soundBar 0.7s ease-in-out infinite; }
+        .music-playing .bar-2 { animation: soundBar 0.5s ease-in-out infinite 0.15s; }
+        .music-playing .bar-3 { animation: soundBar 0.8s ease-in-out infinite 0.3s; }
+        .music-playing .bar-4 { animation: soundBar 0.6s ease-in-out infinite 0.1s; }
+
+        /* Thanh trượt âm lượng tinh tế */
+        input[type="range"].volume-slider {
+            -webkit-appearance: none;
+            appearance: none;
+            background: rgba(250, 245, 235, 0.25);
+            height: 4px;
+            border-radius: 999px;
+            outline: none;
+        }
+        input[type="range"].volume-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 13px;
+            height: 13px;
+            border-radius: 50%;
+            background: #E5C384;
+            border: 1.5px solid #8B1E24;
+            cursor: pointer;
+            transition: transform 0.15s ease;
+        }
+        input[type="range"].volume-slider::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+        }
+        input[type="range"].volume-slider::-moz-range-thumb {
+            width: 13px;
+            height: 13px;
+            border-radius: 50%;
+            background: #E5C384;
+            border: 1.5px solid #8B1E24;
+            cursor: pointer;
+        }
+
+        /* Thanh cuộn tinh tế */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(250, 245, 235, 0.1);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(198, 147, 75, 0.5);
+            border-radius: 9999px;
+        }
+
+        /* Chế độ in ấn (Print CSS) */
+        @media print {
+            body {
+                background: #FAF5EB !important;
+                padding: 0 !important;
+            }
+            .no-print, #petal-canvas {
+                display: none !important;
+            }
+            .card-front-cover {
+                display: none !important;
+            }
+            #main-card-container {
+                box-shadow: none !important;
+                max-width: 100% !important;
+                margin: 0 !important;
+            }
+        }
+    </style>
+<style>*, ::before, ::after{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }::backdrop{--tw-border-spacing-x:0;--tw-border-spacing-y:0;--tw-translate-x:0;--tw-translate-y:0;--tw-rotate:0;--tw-skew-x:0;--tw-skew-y:0;--tw-scale-x:1;--tw-scale-y:1;--tw-pan-x: ;--tw-pan-y: ;--tw-pinch-zoom: ;--tw-scroll-snap-strictness:proximity;--tw-gradient-from-position: ;--tw-gradient-via-position: ;--tw-gradient-to-position: ;--tw-ordinal: ;--tw-slashed-zero: ;--tw-numeric-figure: ;--tw-numeric-spacing: ;--tw-numeric-fraction: ;--tw-ring-inset: ;--tw-ring-offset-width:0px;--tw-ring-offset-color:#fff;--tw-ring-color:rgb(59 130 246 / 0.5);--tw-ring-offset-shadow:0 0 #0000;--tw-ring-shadow:0 0 #0000;--tw-shadow:0 0 #0000;--tw-shadow-colored:0 0 #0000;--tw-blur: ;--tw-brightness: ;--tw-contrast: ;--tw-grayscale: ;--tw-hue-rotate: ;--tw-invert: ;--tw-saturate: ;--tw-sepia: ;--tw-drop-shadow: ;--tw-backdrop-blur: ;--tw-backdrop-brightness: ;--tw-backdrop-contrast: ;--tw-backdrop-grayscale: ;--tw-backdrop-hue-rotate: ;--tw-backdrop-invert: ;--tw-backdrop-opacity: ;--tw-backdrop-saturate: ;--tw-backdrop-sepia: ;--tw-contain-size: ;--tw-contain-layout: ;--tw-contain-paint: ;--tw-contain-style: }/* ! tailwindcss v3.4.17 | MIT License | https://tailwindcss.com */*,::after,::before{box-sizing:border-box;border-width:0;border-style:solid;border-color:#e5e7eb}::after,::before{--tw-content:''}:host,html{line-height:1.5;-webkit-text-size-adjust:100%;-moz-tab-size:4;tab-size:4;font-family:"Inter", sans-serif;font-feature-settings:normal;font-variation-settings:normal;-webkit-tap-highlight-color:transparent}body{margin:0;line-height:inherit}hr{height:0;color:inherit;border-top-width:1px}abbr:where([title]){-webkit-text-decoration:underline dotted;text-decoration:underline dotted}h1,h2,h3,h4,h5,h6{font-size:inherit;font-weight:inherit}a{color:inherit;text-decoration:inherit}b,strong{font-weight:bolder}code,kbd,pre,samp{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;font-feature-settings:normal;font-variation-settings:normal;font-size:1em}small{font-size:80%}sub,sup{font-size:75%;line-height:0;position:relative;vertical-align:baseline}sub{bottom:-.25em}sup{top:-.5em}table{text-indent:0;border-color:inherit;border-collapse:collapse}button,input,optgroup,select,textarea{font-family:inherit;font-feature-settings:inherit;font-variation-settings:inherit;font-size:100%;font-weight:inherit;line-height:inherit;letter-spacing:inherit;color:inherit;margin:0;padding:0}button,select{text-transform:none}button,input:where([type=button]),input:where([type=reset]),input:where([type=submit]){-webkit-appearance:button;background-color:transparent;background-image:none}:-moz-focusring{outline:auto}:-moz-ui-invalid{box-shadow:none}progress{vertical-align:baseline}::-webkit-inner-spin-button,::-webkit-outer-spin-button{height:auto}[type=search]{-webkit-appearance:textfield;outline-offset:-2px}::-webkit-search-decoration{-webkit-appearance:none}::-webkit-file-upload-button{-webkit-appearance:button;font:inherit}summary{display:list-item}blockquote,dd,dl,figure,h1,h2,h3,h4,h5,h6,hr,p,pre{margin:0}fieldset{margin:0;padding:0}legend{padding:0}menu,ol,ul{list-style:none;margin:0;padding:0}dialog{padding:0}textarea{resize:vertical}input::placeholder,textarea::placeholder{opacity:1;color:#9ca3af}[role=button],button{cursor:pointer}:disabled{cursor:default}audio,canvas,embed,iframe,img,object,svg,video{display:block;vertical-align:middle}img,video{max-width:100%;height:auto}[hidden]:where(:not([hidden=until-found])){display:none}.pointer-events-none{pointer-events:none}.fixed{position:fixed}.absolute{position:absolute}.relative{position:relative}.sticky{position:sticky}.inset-0{inset:0px}.bottom-1\.5{bottom:0.375rem}.bottom-3{bottom:0.75rem}.bottom-5{bottom:1.25rem}.left-1\/2{left:50%}.left-3{left:0.75rem}.right-0{right:0px}.right-14{right:3.5rem}.right-3{right:0.75rem}.right-4{right:1rem}.right-5{right:1.25rem}.top-0{top:0px}.top-3{top:0.75rem}.z-10{z-index:10}.z-40{z-index:40}.z-50{z-index:50}.mx-auto{margin-left:auto;margin-right:auto}.my-4{margin-top:1rem;margin-bottom:1rem}.my-auto{margin-top:auto;margin-bottom:auto}.mb-1{margin-bottom:0.25rem}.mb-1\.5{margin-bottom:0.375rem}.mb-2{margin-bottom:0.5rem}.mb-3{margin-bottom:0.75rem}.mb-4{margin-bottom:1rem}.mt-0\.5{margin-top:0.125rem}.mt-2{margin-top:0.5rem}.mt-4{margin-top:1rem}.mt-6{margin-top:1.5rem}.mt-7{margin-top:1.75rem}.block{display:block}.inline-block{display:inline-block}.flex{display:flex}.inline-flex{display:inline-flex}.grid{display:grid}.hidden{display:none}.h-1{height:0.25rem}.h-1\.5{height:0.375rem}.h-12{height:3rem}.h-16{height:4rem}.h-2{height:0.5rem}.h-2\.5{height:0.625rem}.h-24{height:6rem}.h-28{height:7rem}.h-4{height:1rem}.h-44{height:11rem}.h-5{height:1.25rem}.h-6{height:1.5rem}.h-8{height:2rem}.h-80{height:20rem}.h-\[1px\]{height:1px}.h-full{height:100%}.w-12{width:3rem}.w-14{width:3.5rem}.w-16{width:4rem}.w-2\.5{width:0.625rem}.w-24{width:6rem}.w-28{width:7rem}.w-4{width:1rem}.w-40{width:10rem}.w-44{width:11rem}.w-5{width:1.25rem}.w-6{width:1.5rem}.w-7{width:1.75rem}.w-8{width:2rem}.w-80{width:20rem}.w-\[2\.5px\]{width:2.5px}.w-full{width:100%}.max-w-4xl{max-width:56rem}.max-w-6xl{max-width:72rem}.max-w-xl{max-width:36rem}.max-w-xs{max-width:20rem}.shrink-0{flex-shrink:0}.flex-grow{flex-grow:1}.-translate-x-1\/2{--tw-translate-x:-50%;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.translate-y-20{--tw-translate-y:5rem;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.-rotate-6{--tw-rotate:-6deg;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.-rotate-90{--tw-rotate:-90deg;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.rotate-180{--tw-rotate:180deg;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.rotate-3{--tw-rotate:3deg;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.rotate-90{--tw-rotate:90deg;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.transform{transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}.cursor-pointer{cursor:pointer}.grid-cols-1{grid-template-columns:repeat(1, minmax(0, 1fr))}.flex-col{flex-direction:column}.flex-wrap{flex-wrap:wrap}.items-end{align-items:flex-end}.items-center{align-items:center}.justify-end{justify-content:flex-end}.justify-center{justify-content:center}.justify-between{justify-content:space-between}.gap-1\.5{gap:0.375rem}.gap-2{gap:0.5rem}.gap-2\.5{gap:0.625rem}.gap-3{gap:0.75rem}.gap-4{gap:1rem}.gap-6{gap:1.5rem}.gap-\[2px\]{gap:2px}.space-y-3\.5 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(0.875rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(0.875rem * var(--tw-space-y-reverse))}.space-y-4 > :not([hidden]) ~ :not([hidden]){--tw-space-y-reverse:0;margin-top:calc(1rem * calc(1 - var(--tw-space-y-reverse)));margin-bottom:calc(1rem * var(--tw-space-y-reverse))}.overflow-hidden{overflow:hidden}.overflow-y-auto{overflow-y:auto}.rounded-2xl{border-radius:1rem}.rounded-full{border-radius:9999px}.rounded-lg{border-radius:0.5rem}.rounded-xl{border-radius:0.75rem}.border{border-width:1px}.border-2{border-width:2px}.border-4{border-width:4px}.border-b{border-bottom-width:1px}.border-l{border-left-width:1px}.border-t{border-top-width:1px}.border-dashed{border-style:dashed}.border-\[\#6E472B\]{--tw-border-opacity:1;border-color:rgb(110 71 43 / var(--tw-border-opacity, 1))}.border-gold{--tw-border-opacity:1;border-color:rgb(198 147 75 / var(--tw-border-opacity, 1))}.border-gold\/25{border-color:rgb(198 147 75 / 0.25)}.border-gold\/30{border-color:rgb(198 147 75 / 0.3)}.border-gold\/40{border-color:rgb(198 147 75 / 0.4)}.border-gold\/50{border-color:rgb(198 147 75 / 0.5)}.border-gold\/60{border-color:rgb(198 147 75 / 0.6)}.border-gold\/70{border-color:rgb(198 147 75 / 0.7)}.border-goldLight\/50{border-color:rgb(229 195 132 / 0.5)}.border-goldLight\/70{border-color:rgb(229 195 132 / 0.7)}.border-ink\/20{border-color:rgb(44 36 30 / 0.2)}.border-paper\/20{border-color:rgb(250 245 235 / 0.2)}.border-white\/15{border-color:rgb(255 255 255 / 0.15)}.bg-black\/20{background-color:rgb(0 0 0 / 0.2)}.bg-black\/70{background-color:rgb(0 0 0 / 0.7)}.bg-chalkboard{--tw-bg-opacity:1;background-color:rgb(34 51 43 / var(--tw-bg-opacity, 1))}.bg-chalkboard\/80{background-color:rgb(34 51 43 / 0.8)}.bg-crimson{--tw-bg-opacity:1;background-color:rgb(139 30 36 / var(--tw-bg-opacity, 1))}.bg-crimson\/10{background-color:rgb(139 30 36 / 0.1)}.bg-crimson\/90{background-color:rgb(139 30 36 / 0.9)}.bg-gold\/20{background-color:rgb(198 147 75 / 0.2)}.bg-goldLight{--tw-bg-opacity:1;background-color:rgb(229 195 132 / var(--tw-bg-opacity, 1))}.bg-paper\/10{background-color:rgb(250 245 235 / 0.1)}.bg-paperDark{--tw-bg-opacity:1;background-color:rgb(240 230 210 / var(--tw-bg-opacity, 1))}.bg-white\/80{background-color:rgb(255 255 255 / 0.8)}.bg-yellow-200\/80{background-color:rgb(254 240 138 / 0.8)}.bg-gradient-to-br{background-image:linear-gradient(to bottom right, var(--tw-gradient-stops))}.bg-gradient-to-l{background-image:linear-gradient(to left, var(--tw-gradient-stops))}.bg-gradient-to-r{background-image:linear-gradient(to right, var(--tw-gradient-stops))}.from-\[\#7A181E\]{--tw-gradient-from:#7A181E var(--tw-gradient-from-position);--tw-gradient-to:rgb(122 24 30 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.from-transparent{--tw-gradient-from:transparent var(--tw-gradient-from-position);--tw-gradient-to:rgb(0 0 0 / 0) var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), var(--tw-gradient-to)}.via-\[\#5E1015\]{--tw-gradient-to:rgb(94 16 21 / 0)  var(--tw-gradient-to-position);--tw-gradient-stops:var(--tw-gradient-from), #5E1015 var(--tw-gradient-via-position), var(--tw-gradient-to)}.to-\[\#3B080B\]{--tw-gradient-to:#3B080B var(--tw-gradient-to-position)}.to-gold{--tw-gradient-to:#C6934B var(--tw-gradient-to-position)}.p-2{padding:0.5rem}.p-4{padding:1rem}.p-5{padding:1.25rem}.px-2\.5{padding-left:0.625rem;padding-right:0.625rem}.px-3{padding-left:0.75rem;padding-right:0.75rem}.px-3\.5{padding-left:0.875rem;padding-right:0.875rem}.px-4{padding-left:1rem;padding-right:1rem}.px-5{padding-left:1.25rem;padding-right:1.25rem}.py-1{padding-top:0.25rem;padding-bottom:0.25rem}.py-1\.5{padding-top:0.375rem;padding-bottom:0.375rem}.py-2{padding-top:0.5rem;padding-bottom:0.5rem}.py-2\.5{padding-top:0.625rem;padding-bottom:0.625rem}.py-3{padding-top:0.75rem;padding-bottom:0.75rem}.py-4{padding-top:1rem;padding-bottom:1rem}.py-6{padding-top:1.5rem;padding-bottom:1.5rem}.pb-3{padding-bottom:0.75rem}.pl-1\.5{padding-left:0.375rem}.pt-3{padding-top:0.75rem}.pt-4{padding-top:1rem}.text-left{text-align:left}.text-center{text-align:center}.text-right{text-align:right}.text-justify{text-align:justify}.font-editorial{font-family:"Cormorant Garamond", serif}.font-mono{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace}.font-script{font-family:"Dancing Script", cursive}.font-serif{font-family:"Playfair Display", serif}.text-2xl{font-size:1.5rem;line-height:2rem}.text-3xl{font-size:1.875rem;line-height:2.25rem}.text-\[11px\]{font-size:11px}.text-base{font-size:1rem;line-height:1.5rem}.text-lg{font-size:1.125rem;line-height:1.75rem}.text-sm{font-size:0.875rem;line-height:1.25rem}.text-xl{font-size:1.25rem;line-height:1.75rem}.text-xs{font-size:0.75rem;line-height:1rem}.font-bold{font-weight:700}.font-medium{font-weight:500}.font-semibold{font-weight:600}.uppercase{text-transform:uppercase}.italic{font-style:italic}.leading-relaxed{line-height:1.625}.leading-snug{line-height:1.375}.leading-tight{line-height:1.25}.tracking-\[0\.2em\]{letter-spacing:0.2em}.tracking-wide{letter-spacing:0.025em}.tracking-wider{letter-spacing:0.05em}.tracking-widest{letter-spacing:0.1em}.text-crimson{--tw-text-opacity:1;color:rgb(139 30 36 / var(--tw-text-opacity, 1))}.text-crimson\/80{color:rgb(139 30 36 / 0.8)}.text-gold{--tw-text-opacity:1;color:rgb(198 147 75 / var(--tw-text-opacity, 1))}.text-gold\/45{color:rgb(198 147 75 / 0.45)}.text-goldLight{--tw-text-opacity:1;color:rgb(229 195 132 / var(--tw-text-opacity, 1))}.text-goldLight\/80{color:rgb(229 195 132 / 0.8)}.text-goldLight\/90{color:rgb(229 195 132 / 0.9)}.text-ink{--tw-text-opacity:1;color:rgb(44 36 30 / var(--tw-text-opacity, 1))}.text-ink\/70{color:rgb(44 36 30 / 0.7)}.text-ink\/80{color:rgb(44 36 30 / 0.8)}.text-ink\/95{color:rgb(44 36 30 / 0.95)}.text-paper{--tw-text-opacity:1;color:rgb(250 245 235 / var(--tw-text-opacity, 1))}.text-paper\/60{color:rgb(250 245 235 / 0.6)}.text-paper\/90{color:rgb(250 245 235 / 0.9)}.antialiased{-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale}.opacity-0{opacity:0}.opacity-10{opacity:0.1}.opacity-15{opacity:0.15}.opacity-\[0\.07\]{opacity:0.07}.shadow{--tw-shadow:0 1px 3px 0 rgb(0 0 0 / 0.1), 0 1px 2px -1px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 1px 3px 0 var(--tw-shadow-color), 0 1px 2px -1px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-2xl{--tw-shadow:0 25px 50px -12px rgb(0 0 0 / 0.25);--tw-shadow-colored:0 25px 50px -12px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-\[0_25px_60px_-15px_rgba\(0\2c 0\2c 0\2c 0\.65\)\]{--tw-shadow:0 25px 60px -15px rgba(0,0,0,0.65);--tw-shadow-colored:0 25px 60px -15px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-inner{--tw-shadow:inset 0 2px 4px 0 rgb(0 0 0 / 0.05);--tw-shadow-colored:inset 0 2px 4px 0 var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-md{--tw-shadow:0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);--tw-shadow-colored:0 4px 6px -1px var(--tw-shadow-color), 0 2px 4px -2px var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.shadow-sm{--tw-shadow:0 1px 2px 0 rgb(0 0 0 / 0.05);--tw-shadow-colored:0 1px 2px 0 var(--tw-shadow-color);box-shadow:var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow)}.drop-shadow-sm{--tw-drop-shadow:drop-shadow(0 1px 1px rgb(0 0 0 / 0.05));filter:var(--tw-blur) var(--tw-brightness) var(--tw-contrast) var(--tw-grayscale) var(--tw-hue-rotate) var(--tw-invert) var(--tw-saturate) var(--tw-sepia) var(--tw-drop-shadow)}.backdrop-blur-md{--tw-backdrop-blur:blur(12px);-webkit-backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia)}.backdrop-blur-sm{--tw-backdrop-blur:blur(4px);-webkit-backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia);backdrop-filter:var(--tw-backdrop-blur) var(--tw-backdrop-brightness) var(--tw-backdrop-contrast) var(--tw-backdrop-grayscale) var(--tw-backdrop-hue-rotate) var(--tw-backdrop-invert) var(--tw-backdrop-opacity) var(--tw-backdrop-saturate) var(--tw-backdrop-sepia)}.transition{transition-property:color, background-color, border-color, fill, stroke, opacity, box-shadow, transform, filter, -webkit-text-decoration-color, -webkit-backdrop-filter;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter;transition-property:color, background-color, border-color, text-decoration-color, fill, stroke, opacity, box-shadow, transform, filter, backdrop-filter, -webkit-text-decoration-color, -webkit-backdrop-filter;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.transition-all{transition-property:all;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.transition-transform{transition-property:transform;transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);transition-duration:150ms}.duration-300{transition-duration:300ms}.selection\:bg-crimson *::selection{--tw-bg-opacity:1;background-color:rgb(139 30 36 / var(--tw-bg-opacity, 1))}.selection\:text-paper *::selection{--tw-text-opacity:1;color:rgb(250 245 235 / var(--tw-text-opacity, 1))}.selection\:bg-crimson::selection{--tw-bg-opacity:1;background-color:rgb(139 30 36 / var(--tw-bg-opacity, 1))}.selection\:text-paper::selection{--tw-text-opacity:1;color:rgb(250 245 235 / var(--tw-text-opacity, 1))}.hover\:bg-black\/5:hover{background-color:rgb(0 0 0 / 0.05)}.hover\:bg-crimson\/20:hover{background-color:rgb(139 30 36 / 0.2)}.hover\:bg-crimsonDark:hover{--tw-bg-opacity:1;background-color:rgb(99 18 23 / var(--tw-bg-opacity, 1))}.hover\:bg-gold\/25:hover{background-color:rgb(198 147 75 / 0.25)}.hover\:bg-gold\/30:hover{background-color:rgb(198 147 75 / 0.3)}.hover\:bg-paper\/20:hover{background-color:rgb(250 245 235 / 0.2)}.hover\:text-crimson:hover{--tw-text-opacity:1;color:rgb(139 30 36 / var(--tw-text-opacity, 1))}.hover\:text-goldLight:hover{--tw-text-opacity:1;color:rgb(229 195 132 / var(--tw-text-opacity, 1))}.focus\:border-crimson:focus{--tw-border-opacity:1;border-color:rgb(139 30 36 / var(--tw-border-opacity, 1))}.focus\:outline-none:focus{outline:2px solid transparent;outline-offset:2px}.group:hover .group-hover\:scale-110{--tw-scale-x:1.1;--tw-scale-y:1.1;transform:translate(var(--tw-translate-x), var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y))}@media (min-width: 640px){.sm\:my-6{margin-top:1.5rem;margin-bottom:1.5rem}.sm\:mb-4{margin-bottom:1rem}.sm\:mb-6{margin-bottom:1.5rem}.sm\:mt-4{margin-top:1rem}.sm\:mt-6{margin-top:1.5rem}.sm\:block{display:block}.sm\:inline{display:inline}.sm\:flex{display:flex}.sm\:h-20{height:5rem}.sm\:h-24{height:6rem}.sm\:h-28{height:7rem}.sm\:h-32{height:8rem}.sm\:h-64{height:16rem}.sm\:h-7{height:1.75rem}.sm\:h-\[440px\]{height:440px}.sm\:w-20{width:5rem}.sm\:w-24{width:6rem}.sm\:w-28{width:7rem}.sm\:w-32{width:8rem}.sm\:w-64{width:16rem}.sm\:w-7{width:1.75rem}.sm\:w-\[440px\]{width:440px}.sm\:max-w-sm{max-width:24rem}.sm\:grid-cols-2{grid-template-columns:repeat(2, minmax(0, 1fr))}.sm\:flex-row{flex-direction:row}.sm\:items-end{align-items:flex-end}.sm\:gap-10{gap:2.5rem}.sm\:gap-2\.5{gap:0.625rem}.sm\:p-10{padding:2.5rem}.sm\:p-6{padding:1.5rem}.sm\:p-7{padding:1.75rem}.sm\:p-8{padding:2rem}.sm\:px-3{padding-left:0.75rem;padding-right:0.75rem}.sm\:px-6{padding-left:1.5rem;padding-right:1.5rem}.sm\:py-10{padding-top:2.5rem;padding-bottom:2.5rem}.sm\:text-right{text-align:right}.sm\:text-2xl{font-size:1.5rem;line-height:2rem}.sm\:text-3xl{font-size:1.875rem;line-height:2.25rem}.sm\:text-4xl{font-size:2.25rem;line-height:2.5rem}.sm\:text-5xl{font-size:3rem;line-height:1}.sm\:text-base{font-size:1rem;line-height:1.5rem}.sm\:text-lg{font-size:1.125rem;line-height:1.75rem}.sm\:text-sm{font-size:0.875rem;line-height:1.25rem}.sm\:text-xl{font-size:1.25rem;line-height:1.75rem}}@media (min-width: 768px){.md\:inline{display:inline}.md\:p-12{padding:3rem}.md\:text-6xl{font-size:3.75rem;line-height:1}}@media (min-width: 1024px){.lg\:col-span-5{grid-column:span 5 / span 5}.lg\:col-span-7{grid-column:span 7 / span 7}.lg\:grid-cols-12{grid-template-columns:repeat(12, minmax(0, 1fr))}}</style></head>
+<body class="antialiased selection:bg-crimson selection:text-paper flex flex-col justify-between">
+
+    <!-- Canvas hiệu ứng cánh hoa phượng & hoa hướng dương rơi nhẹ nhàng -->
+    <canvas id="petal-canvas" class="fixed inset-0 pointer-events-none z-40" width="948" height="828"></canvas>
+
+    <!-- Thanh công cụ điều khiển nổi phía trên -->
+    <header class="no-print sticky top-0 z-50 w-full backdrop-blur-md bg-chalkboard/80 border-b border-gold/25 px-3 sm:px-6 py-2.5">
+        <div class="max-w-6xl mx-auto flex flex-wrap items-center justify-between gap-2">
+            <!-- Thương hiệu / Tiêu đề nhỏ -->
+            <div class="flex items-center gap-2.5">
+                <span class="w-8 h-8 rounded-full bg-crimson/90 border border-gold/60 flex items-center justify-center text-goldLight shadow-sm">
+                    <!-- Icon quyển sách & ngòi bút -->
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"></path>
+                    </svg>
+                </span>
+                <div>
+                    <h1 class="font-serif text-paper text-sm sm:text-base font-semibold tracking-wide">Tri Ân Ngày Nhà Giáo 20/11</h1>
+                    <p class="text-[11px] text-goldLight/80 hidden sm:block">Thiệp chúc mừng tương tác &amp; cá nhân hóa</p>
+                </div>
+            </div>
+
+            <!-- Nhóm nút chức năng -->
+            <div class="flex items-center gap-1.5 sm:gap-2.5">
+                <!-- Cụm điều khiển nhạc nền & thanh trượt âm lượng -->
+                <div class="flex items-center gap-2 px-2.5 sm:px-3 py-1.5 rounded-full bg-paper/10 border border-gold/40 text-paper">
+                    <button id="music-toggle-btn" onclick="toggleMusic()" class="flex items-center gap-2 hover:text-goldLight text-xs sm:text-sm transition cursor-pointer" title="Bật/Tắt nhạc nền">
+                        <div id="sound-bars" class="flex items-end gap-[2px] h-4 w-4 justify-center">
+                            <span class="bar-1 w-[2.5px] h-1.5 bg-goldLight rounded-full"></span>
+                            <span class="bar-2 w-[2.5px] h-2.5 bg-goldLight rounded-full"></span>
+                            <span class="bar-3 w-[2.5px] h-1 bg-goldLight rounded-full"></span>
+                            <span class="bar-4 w-[2.5px] h-2 bg-goldLight rounded-full"></span>
+                        </div>
+                        <span id="music-status-text" class="hidden md:inline">Bật nhạc</span>
+                    </button>
+                    <div class="flex items-center gap-1.5 pl-1.5 border-l border-gold/30" title="Điều chỉnh âm lượng nhạc">
+                        <input type="range" id="volume-slider" min="0" max="100" value="100" oninput="setMusicVolume(this.value)" class="volume-slider w-14 sm:w-20 cursor-pointer" aria-label="Âm lượng nhạc nền">
+                        <span id="volume-percent" class="text-[11px] text-goldLight/90 font-mono w-7 text-right hidden sm:inline">100%</span>
+                    </div>
+                </div>
+
+                <!-- Nút Chỉnh sửa lời chúc -->
+                <button onclick="openEditModal()" class="flex items-center gap-1.5 px-3 py-2 rounded-full bg-gold/20 hover:bg-gold/30 border border-gold/60 text-goldLight text-xs sm:text-sm font-medium transition cursor-pointer">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path>
+                    </svg>
+                    <span>Viết lời chúc</span>
+                </button>
+
+                <!-- Nút Tải file HTML cá nhân hóa -->
+                <button onclick="downloadPersonalizedHTML()" class="flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-crimson hover:bg-crimsonDark border border-gold/50 text-paper text-xs sm:text-sm font-medium shadow-md transition cursor-pointer">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path>
+                    </svg>
+                    <span>Lưu thiệp</span>
+                </button>
+
+                <!-- Nút In / Xuất PDF -->
+                <button onclick="window.print()" class="hidden sm:flex items-center gap-1.5 px-3 py-2 rounded-full bg-paper/10 hover:bg-paper/20 border border-paper/20 text-paper/90 text-xs sm:text-sm transition cursor-pointer" title="In thiệp hoặc lưu PDF">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Khu vực hiển thị Thiệp 3D Chính -->
+    <main class="flex-grow flex flex-col items-center justify-center px-3 sm:px-6 py-6 sm:py-10">
+        <div class="perspective-container w-full max-w-4xl mx-auto">
+            <!-- Khung thiệp chính -->
+            <div id="main-card-container" class="card-3d-wrapper relative w-full rounded-2xl shadow-[0_25px_60px_-15px_rgba(0,0,0,0.65)]">
+                
+                <!-- ==================== MẶT BÌA TRƯỚC (COVER) ==================== -->
+                <div id="card-cover" class="card-front-cover absolute inset-0 w-full h-full rounded-2xl bg-gradient-to-br from-[#7A181E] via-[#5E1015] to-[#3B080B] border-2 border-gold/70 p-4 sm:p-8 flex flex-col items-center justify-between text-center shadow-2xl overflow-hidden">
+                    
+                    <!-- Họa tiết góc cổ điển SVG -->
+                    <svg class="absolute top-3 left-3 w-16 h-16 sm:w-24 sm:h-24 text-gold/45 pointer-events-none" viewBox="0 0 100 100" fill="none">
+                        <path d="M5 95V25C5 13.9543 13.9543 5 25 5H95" stroke="currentColor" stroke-width="2"></path>
+                        <path d="M14 95V30C14 21.1634 21.1634 14 30 14H95" stroke="currentColor" stroke-width="1" stroke-dasharray="3 3"></path>
+                        <circle cx="22" cy="22" r="4" fill="currentColor"></circle>
+                    </svg>
+                    <svg class="absolute top-3 right-3 w-16 h-16 sm:w-24 sm:h-24 text-gold/45 pointer-events-none rotate-90" viewBox="0 0 100 100" fill="none">
+                        <path d="M5 95V25C5 13.9543 13.9543 5 25 5H95" stroke="currentColor" stroke-width="2"></path>
+                        <path d="M14 95V30C14 21.1634 21.1634 14 30 14H95" stroke="currentColor" stroke-width="1" stroke-dasharray="3 3"></path>
+                        <circle cx="22" cy="22" r="4" fill="currentColor"></circle>
+                    </svg>
+                    <svg class="absolute bottom-3 left-3 w-16 h-16 sm:w-24 sm:h-24 text-gold/45 pointer-events-none -rotate-90" viewBox="0 0 100 100" fill="none">
+                        <path d="M5 95V25C5 13.9543 13.9543 5 25 5H95" stroke="currentColor" stroke-width="2"></path>
+                        <path d="M14 95V30C14 21.1634 21.1634 14 30 14H95" stroke="currentColor" stroke-width="1" stroke-dasharray="3 3"></path>
+                        <circle cx="22" cy="22" r="4" fill="currentColor"></circle>
+                    </svg>
+                    <svg class="absolute bottom-3 right-3 w-16 h-16 sm:w-24 sm:h-24 text-gold/45 pointer-events-none rotate-180" viewBox="0 0 100 100" fill="none">
+                        <path d="M5 95V25C5 13.9543 13.9543 5 25 5H95" stroke="currentColor" stroke-width="2"></path>
+                        <path d="M14 95V30C14 21.1634 21.1634 14 30 14H95" stroke="currentColor" stroke-width="1" stroke-dasharray="3 3"></path>
+                        <circle cx="22" cy="22" r="4" fill="currentColor"></circle>
+                    </svg>
+
+                    <!-- Họa tiết hoa hướng dương & trang sách mờ nền bìa -->
+                    <div class="absolute inset-0 flex items-center justify-center opacity-10 pointer-events-none">
+                        <svg class="w-80 h-80 sm:w-[440px] sm:h-[440px] text-goldLight" viewBox="0 0 200 200" fill="currentColor">
+                            <circle cx="100" cy="100" r="28" fill="none" stroke="currentColor" stroke-width="2"></circle>
+                            <path d="M100 15 L108 55 L100 65 L92 55 Z M100 185 L108 145 L100 135 L92 145 Z M15 100 L55 92 L65 100 L55 108 Z M185 100 L145 92 L135 100 L145 108 Z"></path>
+                            <path d="M40 40 L72 62 L75 75 L62 72 Z M160 160 L128 138 L125 125 L138 128 Z M160 40 L138 72 L125 75 L128 62 Z M40 160 L62 128 L75 125 L72 138 Z"></path>
+                        </svg>
+                    </div>
+
+                    <!-- Phần đầu bìa -->
+                    <div class="relative z-10 mt-4 sm:mt-6">
+                        <div class="inline-flex items-center gap-2 px-4 py-1 rounded-full border border-gold/40 bg-black/20 text-goldLight text-xs sm:text-sm tracking-[0.2em] uppercase">
+                            <span>Kính Tặng Người Lái Đò Thầm Lặng</span>
+                        </div>
+                    </div>
+
+                    <!-- Trung tâm bìa: Tiêu đề lớn & Con dấu sáp -->
+                    <div class="relative z-10 flex flex-col items-center my-auto py-4">
+                        <p class="font-script text-goldLight text-2xl sm:text-4xl mb-1">Chào Mừng</p>
+                        <h2 class="font-serif text-3xl sm:text-5xl md:text-6xl font-bold gold-foil-text tracking-wide leading-tight drop-shadow-sm">
+                            Ngày Nhà Giáo<br>Việt Nam
+                        </h2>
+                        
+                        <div class="flex items-center gap-4 my-4 sm:my-6">
+                            <span class="h-[1px] w-12 sm:w-20 bg-gradient-to-r from-transparent to-gold"></span>
+                            <span class="font-serif text-2xl sm:text-4xl font-bold text-paper tracking-widest border border-gold/60 px-4 py-1 rounded-lg bg-black/20">
+                                20 • 11
+                            </span>
+                            <span class="h-[1px] w-12 sm:w-20 bg-gradient-to-l from-transparent to-gold"></span>
+                        </div>
+
+                        <!-- Nút Con Dấu Sáp Mở Thiệp -->
+                        <button onclick="openCard()" class="wax-seal group relative mt-2 sm:mt-4 w-28 h-28 sm:w-32 sm:h-32 rounded-full border-2 border-goldLight/70 flex flex-col items-center justify-center text-paper cursor-pointer focus:outline-none">
+                            <div class="w-24 h-24 sm:w-28 sm:h-28 rounded-full border border-dashed border-goldLight/50 flex flex-col items-center justify-center p-2">
+                                <svg class="w-6 h-6 sm:w-7 sm:h-7 text-goldLight mb-1 group-hover:scale-110 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.6" d="M3 19v-8.93a2 2 0 01.89-1.664l7-4.666a2 2 0 012.22 0l7 4.666A2 2 0 0121 10.07V19M3 19a2 2 0 002 2h14a2 2 0 002-2M3 19l6.75-4.5M21 19l-6.75-4.5M3 10l6.75 4.5M21 10l-6.75 4.5m0 0l-1.14.76a2 2 0 01-2.22 0l-1.14-.76"></path>
+                                </svg>
+                                <span class="font-serif text-xs sm:text-sm font-semibold tracking-wider uppercase text-goldLight">Mở Thiệp</span>
+                            </div>
+                        </button>
+                    </div>
+
+                    <!-- Chân bìa -->
+                    <div class="relative z-10 mb-3 sm:mb-4 text-goldLight/80 text-xs sm:text-sm font-editorial italic">
+                        “Một chữ cũng là thầy, nửa chữ cũng là thầy”
+                    </div>
+                </div>
+
+                <!-- ==================== NỘI DUNG BÊN TRONG THIỆP (INNER CONTENT) ==================== -->
+                <div class="giay-do-texture gold-border-frame rounded-2xl p-5 sm:p-10 md:p-12 relative overflow-hidden">
+                    
+                    <!-- Họa tiết bảng đen phấn trắng & hoa hướng dương tinh tế ở góc -->
+                    <div class="absolute top-0 right-0 w-44 h-44 sm:w-64 sm:h-64 opacity-[0.07] pointer-events-none">
+                        <svg viewBox="0 0 200 200" fill="none" stroke="#8B1E24" stroke-width="1.5">
+                            <circle cx="140" cy="60" r="22"></circle>
+                            <circle cx="140" cy="60" r="14" stroke-dasharray="2 2"></circle>
+                            <path d="M140 15 C146 32, 134 32, 140 15 Z M140 105 C146 88, 134 88, 140 105 Z M95 60 C112 54, 112 66, 95 60 Z M185 60 C168 54, 168 66, 185 60 Z"></path>
+                            <path d="M108 28 C124 36, 116 44, 108 28 Z M172 92 C156 84, 164 76, 172 92 Z M172 28 C164 44, 156 36, 172 28 Z M108 92 C116 76, 124 84, 108 92 Z"></path>
+                        </svg>
+                    </div>
+
+                    <!-- Họa tiết trang sách mở ở đáy trang -->
+                    <div class="absolute bottom-3 left-1/2 -translate-x-1/2 opacity-15 pointer-events-none">
+                        <svg class="w-40 h-12 text-gold" viewBox="0 0 160 40" fill="none" stroke="currentColor" stroke-width="1.2">
+                            <path d="M80 35 C60 25, 30 28, 10 34 L10 10 C30 4, 60 2, 80 12 C100 2, 130 4, 150 10 L150 34 C130 28, 100 25, 80 35 Z"></path>
+                            <line x1="80" y1="12" x2="80" y2="35"></line>
+                        </svg>
+                    </div>
+
+                    <!-- Nút đóng bìa thiệp lại để xem hiệu ứng 3D lần nữa -->
+                    <div class="no-print flex justify-between items-center mb-4 sm:mb-6 border-b border-gold/30 pb-3">
+                        <button onclick="closeCard()" class="inline-flex items-center gap-1.5 text-xs sm:text-sm text-crimson/80 hover:text-crimson font-medium transition cursor-pointer">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 17l-5-5m0 0l5-5m-5 5h12"></path>
+                            </svg>
+                            <span>Gấp bìa thiệp</span>
+                        </button>
+                        <span class="text-xs font-serif uppercase tracking-widest text-gold font-semibold">20 • 11 • Tri Ân</span>
+                    </div>
+
+                    <!-- Bố cục 2 cột trên màn hình lớn: Trái (Biểu tượng Tri ân & Bảng phấn), Phải (Tâm thư & Lời chúc) -->
+                    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-10 items-center relative z-10">
+                        
+                        <!-- Cột Trái: Khung Bảng Xanh Phấn Trắng & Hoa Hướng Dương -->
+                        <div class="lg:col-span-5 flex flex-col items-center">
+                            <div class="w-full rounded-xl bg-chalkboard border-4 border-[#6E472B] shadow-inner p-5 sm:p-6 text-paper relative overflow-hidden">
+                                <!-- Viên phấn & giẻ lau nhỏ trang trí góc bảng -->
+                                <div class="absolute bottom-1.5 right-4 w-8 h-1.5 bg-white/80 rounded-full rotate-3 shadow"></div>
+                                <div class="absolute bottom-1.5 right-14 w-5 h-1.5 bg-yellow-200/80 rounded-full -rotate-6 shadow"></div>
+
+                                <!-- Hoa hướng dương cách điệu SVG -->
+                                <div class="flex justify-center mb-3">
+                                    <svg class="w-16 h-16 sm:w-20 sm:h-20" viewBox="0 0 100 100">
+                                        <!-- Cánh hoa vàng -->
+                                        <g fill="#E5A93B">
+                                            <ellipse cx="50" cy="18" rx="6" ry="15"></ellipse>
+                                            <ellipse cx="50" cy="82" rx="6" ry="15"></ellipse>
+                                            <ellipse cx="18" cy="50" rx="15" ry="6"></ellipse>
+                                            <ellipse cx="82" cy="50" rx="15" ry="6"></ellipse>
+                                            <ellipse cx="27" cy="27" rx="6" ry="15" transform="rotate(-45 27 27)"></ellipse>
+                                            <ellipse cx="73" cy="73" rx="6" ry="15" transform="rotate(-45 73 73)"></ellipse>
+                                            <ellipse cx="73" cy="27" rx="6" ry="15" transform="rotate(45 73 27)"></ellipse>
+                                            <ellipse cx="27" cy="73" rx="6" ry="15" transform="rotate(45 27 73)"></ellipse>
+                                        </g>
+                                        <g fill="#F4C95D">
+                                            <ellipse cx="50" cy="21" rx="4.5" ry="12" transform="rotate(22.5 50 50)"></ellipse>
+                                            <ellipse cx="50" cy="21" rx="4.5" ry="12" transform="rotate(67.5 50 50)"></ellipse>
+                                            <ellipse cx="50" cy="21" rx="4.5" ry="12" transform="rotate(112.5 50 50)"></ellipse>
+                                            <ellipse cx="50" cy="21" rx="4.5" ry="12" transform="rotate(157.5 50 50)"></ellipse>
+                                            <ellipse cx="50" cy="21" rx="4.5" ry="12" transform="rotate(202.5 50 50)"></ellipse>
+                                            <ellipse cx="50" cy="21" rx="4.5" ry="12" transform="rotate(247.5 50 50)"></ellipse>
+                                            <ellipse cx="50" cy="21" rx="4.5" ry="12" transform="rotate(292.5 50 50)"></ellipse>
+                                            <ellipse cx="50" cy="21" rx="4.5" ry="12" transform="rotate(337.5 50 50)"></ellipse>
+                                        </g>
+                                        <!-- Nhụy hoa nâu ấm -->
+                                        <circle cx="50" cy="50" r="16" fill="#5A3219"></circle>
+                                        <circle cx="50" cy="50" r="12" fill="none" stroke="#C6934B" stroke-width="1.5" stroke-dasharray="2 2"></circle>
+                                    </svg>
+                                </div>
+
+                                <p class="font-script text-center text-2xl sm:text-3xl text-goldLight mb-2">
+                                    Người Gieo Hạt Nắng
+                                </p>
+                                <p class="font-editorial italic text-center text-paper/90 text-base sm:text-lg leading-relaxed">
+                                    “Có một nghề bụi phấn bám đầy tay<br>
+                                    Người ta bảo đó là nghề trong sạch nhất<br>
+                                    Có một nghề không trồng cây vào đất<br>
+                                    Mà mang lại cho Đời đầy trái ngọt hoa tươi!”
+                                </p>
+                                <div class="mt-4 pt-3 border-t border-white/15 flex items-center justify-center gap-2 text-xs text-goldLight/90 tracking-widest uppercase">
+                                    <span>Kính Chúc 20/11</span>
+                                </div>
+                            </div>
+
+                            <!-- Nút mở nhanh hộp chỉnh sửa lời chúc ngay dưới bảng -->
+                            <button onclick="openEditModal()" class="no-print mt-4 inline-flex items-center gap-2 px-4 py-2 rounded-full bg-paperDark hover:bg-gold/25 border border-gold/50 text-crimson text-xs sm:text-sm font-medium transition cursor-pointer">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"></path>
+                                </svg>
+                                <span>Tùy chỉnh tên Thầy/Cô &amp; lời chúc</span>
+                            </button>
+                        </div>
+
+                        <!-- Cột Phải: Nội dung Lời Chúc Tri Ân -->
+                        <div class="lg:col-span-7 flex flex-col justify-between text-ink">
+                            <div>
+                                <!-- Lời chào đầu thư -->
+                                <div class="mb-4">
+                                    <span class="inline-block text-xs uppercase tracking-[0.2em] text-gold font-semibold mb-1">Nhân dịp Ngày Nhà giáo Việt Nam 20/11</span>
+                                    <h3 id="display-recipient" class="font-serif text-2xl sm:text-3xl font-bold text-crimson leading-snug">
+                                        Kính gửi Thầy Cô kính mến,
+                                    </h3>
+                                </div>
+
+                                <!-- Đoạn văn lời chúc (có thể thay đổi nội dung động) -->
+                                <div id="display-message" class="font-editorial text-lg sm:text-xl leading-relaxed text-ink/95 space-y-3.5 text-justify">
+                                    <p>
+                                        Nhân ngày Hiến chương Nhà giáo Việt Nam 20/11, em xin gửi tới Thầy Cô lời chúc sức khỏe, bình an và lời tri ân sâu sắc nhất từ tận đáy lòng.
+                                    </p>
+                                    <p>
+                                        Cảm ơn Thầy Cô đã luôn tận tụy, kiên nhẫn thắp sáng ngọn lửa tri thức và chắp cánh cho bao thế hệ học trò vững bước trên đường đời. Những bài học quý giá và sự ân cần của Thầy Cô sẽ mãi là hành trang đẹp đẽ nhất theo em suốt cuộc đời.
+                                    </p>
+                                    <p>
+                                        Kính chúc Thầy Cô luôn dồi dào sức khỏe, giữ mãi ngọn lửa đam mê với sự nghiệp trồng người cao quý và gặt hái thật nhiều niềm vui, hạnh phúc!
+                                    </p>
+                                </div>
+                            </div>
+
+                            <!-- Chữ ký & Ngày tháng -->
+                            <div class="mt-7 pt-4 border-t border-gold/30 flex flex-col sm:flex-row sm:items-end justify-between gap-4">
+                                <div class="text-xs sm:text-sm text-ink/70 font-editorial italic">
+                                    <span id="display-date">Ngày 20 tháng 11</span>
+                                </div>
+                                <div class="text-left sm:text-right">
+                                    <p class="font-editorial italic text-base text-ink/80">Học trò của Thầy Cô,</p>
+                                    <p id="display-sender" class="font-script text-2xl sm:text-3xl text-crimson font-bold mt-0.5">
+                                        Tập thể lớp &amp; Học trò kính tặng
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+
+    <!-- Chân trang nhỏ gọn -->
+    <footer class="no-print text-center py-4 px-4 text-paper/60 text-xs">
+        <p>Nhấn vào <span class="text-goldLight font-medium">“Viết lời chúc”</span> để ghi tên Thầy/Cô của bạn, sau đó chọn <span class="text-goldLight font-medium">“Lưu thiệp”</span> để tải file HTML gửi tặng.</p>
+    </footer>
+
+    <!-- ==================== MODAL CHỈNH SỬA LỜI CHÚC ==================== -->
+    <div id="edit-modal" class="no-print fixed inset-0 z-50 hidden items-center justify-center bg-black/70 backdrop-blur-sm p-4 overflow-y-auto">
+        <div class="giay-do-texture border-2 border-gold rounded-2xl w-full max-w-xl p-5 sm:p-7 shadow-2xl relative my-auto">
+            <div class="flex items-center justify-between border-b border-gold/30 pb-3 mb-4">
+                <h3 class="font-serif text-xl sm:text-2xl font-bold text-crimson">Cá Nhân Hóa Thiệp Chúc</h3>
+                <button onclick="closeEditModal()" class="w-8 h-8 rounded-full bg-crimson/10 hover:bg-crimson/20 text-crimson flex items-center justify-center transition cursor-pointer">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                </button>
+            </div>
+
+            <div class="space-y-4">
+                <!-- Chọn mẫu lời chúc nhanh -->
+                <div>
+                    <label class="block text-xs font-semibold uppercase tracking-wider text-ink/70 mb-1.5">Chọn nhanh mẫu lời chúc ý nghĩa:</label>
+                    <div class="flex flex-wrap gap-2">
+                        <button type="button" onclick="applyPreset(0)" class="px-3 py-1.5 rounded-lg bg-paperDark hover:bg-gold/30 border border-gold/40 text-xs font-medium text-ink transition cursor-pointer">Trang trọng &amp; Sâu sắc</button>
+                        <button type="button" onclick="applyPreset(1)" class="px-3 py-1.5 rounded-lg bg-paperDark hover:bg-gold/30 border border-gold/40 text-xs font-medium text-ink transition cursor-pointer">Tặng Cô Giáo</button>
+                        <button type="button" onclick="applyPreset(2)" class="px-3 py-1.5 rounded-lg bg-paperDark hover:bg-gold/30 border border-gold/40 text-xs font-medium text-ink transition cursor-pointer">Tặng Thầy Giáo</button>
+                        <button type="button" onclick="applyPreset(3)" class="px-3 py-1.5 rounded-lg bg-paperDark hover:bg-gold/30 border border-gold/40 text-xs font-medium text-ink transition cursor-pointer">Cựu Học Sinh Tri Ân</button>
+                    </div>
+                </div>
+
+                <!-- Nhập tên Thầy/Cô -->
+                <div>
+                    <label for="input-recipient" class="block text-sm font-medium text-ink mb-1">Lời chào / Tên Thầy Cô nhận thiệp:</label>
+                    <input type="text" id="input-recipient" class="w-full px-3.5 py-2.5 rounded-xl bg-white/80 border border-gold/50 focus:border-crimson focus:outline-none text-ink text-sm sm:text-base" placeholder="Ví dụ: Kính gửi Cô Nguyễn Thị Lan kính mến,">
+                </div>
+
+                <!-- Nhập nội dung lời chúc -->
+                <div>
+                    <label for="input-message" class="block text-sm font-medium text-ink mb-1">Nội dung lời chúc (mỗi dòng là một đoạn):</label>
+                    <textarea id="input-message" rows="5" class="w-full px-3.5 py-2.5 rounded-xl bg-white/80 border border-gold/50 focus:border-crimson focus:outline-none text-ink text-sm sm:text-base leading-relaxed"></textarea>
+                </div>
+
+                <!-- Nhập tên người gửi & Dòng thời gian -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label for="input-sender" class="block text-sm font-medium text-ink mb-1">Tên người gửi / Tập thể:</label>
+                        <input type="text" id="input-sender" class="w-full px-3.5 py-2.5 rounded-xl bg-white/80 border border-gold/50 focus:border-crimson focus:outline-none text-ink text-sm" placeholder="Ví dụ: Học trò Minh Anh">
+                    </div>
+                    <div>
+                        <label for="input-date" class="block text-sm font-medium text-ink mb-1">Ngày tháng / Địa điểm:</label>
+                        <input type="text" id="input-date" class="w-full px-3.5 py-2.5 rounded-xl bg-white/80 border border-gold/50 focus:border-crimson focus:outline-none text-ink text-sm" placeholder="Ví dụ: Hà Nội, ngày 20/11">
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-6 flex flex-wrap items-center justify-end gap-2.5 pt-3 border-t border-gold/30">
+                <button onclick="closeEditModal()" class="px-4 py-2 rounded-xl border border-ink/20 text-ink/80 hover:bg-black/5 text-sm font-medium transition cursor-pointer">Hủy</button>
+                <button onclick="saveCardChanges()" class="px-5 py-2 rounded-xl bg-crimson hover:bg-crimsonDark text-paper text-sm font-semibold shadow-md transition cursor-pointer">Cập Nhật Thiệp</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hộp thông báo Toast thay thế alert() -->
+    <div id="toast-notification" class="no-print fixed bottom-5 right-5 z-50 transform translate-y-20 opacity-0 transition-all duration-300 bg-chalkboard border border-gold text-paper px-4 py-3 rounded-xl shadow-2xl flex items-center gap-2.5 text-sm max-w-xs sm:max-w-sm">
+        <span class="w-2.5 h-2.5 rounded-full bg-goldLight shrink-0"></span>
+        <span id="toast-message">Đã cập nhật nội dung thiệp!</span>
+    </div>
+
+    <script>
+        /* ==========================================================================
+           1. DỮ LIỆU LỜI CHÚC MẪU & TRẠNG THÁI THIỆP
+           ========================================================================== */
+        const PRESET_MESSAGES = [
+            {
+                recipient: "Kính gửi Thầy Cô kính mến,",
+                message: "Nhân ngày Hiến chương Nhà giáo Việt Nam 20/11, em xin gửi tới Thầy Cô lời chúc sức khỏe, bình an và lời tri ân sâu sắc nhất từ tận đáy lòng.\nCảm ơn Thầy Cô đã luôn tận tụy, kiên nhẫn thắp sáng ngọn lửa tri thức và chắp cánh cho bao thế hệ học trò vững bước trên đường đời. Những bài học quý giá và sự ân cần của Thầy Cô sẽ mãi là hành trang đẹp đẽ nhất theo em suốt cuộc đời.\nKính chúc Thầy Cô luôn dồi dào sức khỏe, giữ mãi ngọn lửa đam mê với sự nghiệp trồng người cao quý và gặt hái thật nhiều niềm vui, hạnh phúc!",
+                sender: "Tập thể lớp & Học trò kính tặng",
+                date: "Ngày 20 tháng 11"
+            },
+            {
+                recipient: "Kính gửi Cô giáo kính yêu,",
+                message: "Nhân ngày Nhà giáo Việt Nam 20/11, em kính chúc Cô luôn xinh đẹp, rạng rỡ, tràn đầy sức khỏe và hạnh phúc bên gia đình cùng những trang giáo án.\nCô không chỉ dạy chúng em kiến thức mà còn dạy cách làm người, cách yêu thương và sẻ chia bằng tất cả sự dịu dàng, bao dung như người mẹ thứ hai.\nCảm ơn Cô vì đã luôn đồng hành và chắp cánh cho những ước mơ của chúng em bay cao, bay xa!",
+                sender: "Học trò nhỏ của Cô",
+                date: "Ngày 20 tháng 11"
+            },
+            {
+                recipient: "Kính gửi Thầy giáo kính mến,",
+                message: "Chào mừng ngày Nhà giáo Việt Nam 20/11, em xin gửi tới Thầy lời chúc sức khỏe, vững tay chèo để tiếp tục đưa thêm nhiều chuyến đò tri thức cập bến thành công.\nSự nghiêm khắc nhưng đầy ấm áp, cùng những bài giảng tâm huyết của Thầy đã truyền cho em niềm đam mê học hỏi và bản lĩnh vượt qua mọi thử thách.\nKính chúc Thầy luôn mạnh khỏe, bình an và gặt hái thật nhiều thành công trong sự nghiệp giáo dục!",
+                sender: "Học trò của Thầy",
+                date: "Ngày 20 tháng 11"
+            },
+            {
+                recipient: "Kính gửi Thầy Cô kính mến,",
+                message: "Dù đã rời xa mái trường thân yêu, nhưng mỗi dịp 20/11 về, lòng em lại bồi hồi nhớ về bảng đen, phấn trắng và giọng giảng ấm áp của Thầy Cô năm nào.\nNhững nền tảng tri thức và nhân cách mà Thầy Cô dày công vun đắp chính là điểm tựa vững chắc giúp em trưởng thành như ngày hôm nay.\nKính chúc Thầy Cô luôn mạnh khỏe, an vui và mãi là ngọn hải đăng soi sáng cho bao thế hệ học trò!",
+                sender: "Cựu học sinh kính tri ân",
+                date: "Ngày 20 tháng 11"
+            }
+        ];
+
+        // Khởi tạo trạng thái hiện tại từ DOM (hỗ trợ giữ nguyên dữ liệu khi tải file HTML về)
+        let cardState = {
+            recipient: document.getElementById('display-recipient').innerText.trim(),
+            paragraphs: Array.from(document.querySelectorAll('#display-message p')).map(p => p.innerText.trim()),
+            sender: document.getElementById('display-sender').innerText.trim(),
+            date: document.getElementById('display-date').innerText.trim(),
+            isOpen: false
+        };
+
+        /* ==========================================================================
+           2. HIỆU ỨNG MỞ / GẤP THIỆP 3D
+           ========================================================================== */
+        function openCard() {
+            const container = document.getElementById('main-card-container');
+            container.classList.add('card-opened');
+            cardState.isOpen = true;
+
+            // Tự động bật nhạc nhẹ nhàng nếu chưa bật (tương tác người dùng hợp lệ cho Web Audio)
+            if (!isMusicPlaying && !userManuallyMuted) {
+                startMusic();
+            }
+            // Tạo thêm một đợt cánh hoa nở rộ khi mở thiệp
+            burstPetals(28);
+        }
+
+        function closeCard() {
+            const container = document.getElementById('main-card-container');
+            container.classList.remove('card-opened');
+            cardState.isOpen = false;
+        }
+
+        /* ==========================================================================
+           3. TÙY CHỈNH NỘI DUNG & XUẤT FILE HTML CÁ NHÂN HÓA
+           ========================================================================== */
+        function openEditModal() {
+            document.getElementById('input-recipient').value = cardState.recipient;
+            document.getElementById('input-message').value = cardState.paragraphs.join('\n');
+            document.getElementById('input-sender').value = cardState.sender;
+            document.getElementById('input-date').value = cardState.date;
+
+            const modal = document.getElementById('edit-modal');
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        }
+
+        function closeEditModal() {
+            const modal = document.getElementById('edit-modal');
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        }
+
+        function applyPreset(index) {
+            const preset = PRESET_MESSAGES[index];
+            if (!preset) return;
+            document.getElementById('input-recipient').value = preset.recipient;
+            document.getElementById('input-message').value = preset.message;
+            document.getElementById('input-sender').value = preset.sender;
+            document.getElementById('input-date').value = preset.date;
+        }
+
+        function escapeHTML(str) {
+            const div = document.createElement('div');
+            div.textContent = str;
+            return div.innerHTML;
+        }
+
+        function saveCardChanges() {
+            const recipient = document.getElementById('input-recipient').value.trim() || "Kính gửi Thầy Cô kính mến,";
+            const rawMessage = document.getElementById('input-message').value.trim();
+            const sender = document.getElementById('input-sender').value.trim() || "Học trò kính tặng";
+            const date = document.getElementById('input-date').value.trim() || "Ngày 20 tháng 11";
+
+            const paragraphs = rawMessage
+                ? rawMessage.split('\n').map(line => line.trim()).filter(line => line.length > 0)
+                : ["Kính chúc Thầy Cô ngày 20/11 thật nhiều sức khỏe, niềm vui và hạnh phúc!"];
+
+            cardState.recipient = recipient;
+            cardState.paragraphs = paragraphs;
+            cardState.sender = sender;
+            cardState.date = date;
+
+            // Cập nhật lên giao diện
+            document.getElementById('display-recipient').textContent = recipient;
+            document.getElementById('display-message').innerHTML = paragraphs
+                .map(p => `<p>${escapeHTML(p)}</p>`)
+                .join('');
+            document.getElementById('display-sender').textContent = sender;
+            document.getElementById('display-date').textContent = date;
+
+            closeEditModal();
+            if (!cardState.isOpen) {
+                openCard();
+            }
+            showToast("Đã cập nhật lời chúc lên thiệp!");
+        }
+
+        // Tải thiệp dưới dạng file HTML độc lập đã lưu sẵn nội dung người dùng nhập
+        function downloadPersonalizedHTML() {
+            try {
+                // Đảm bảo trạng thái mở thiệp được reset về đóng bìa để người nhận trải nghiệm hiệu ứng mở thiệp 3D
+                const wasOpen = cardState.isOpen;
+                const container = document.getElementById('main-card-container');
+                container.classList.remove('card-opened');
+
+                // Đặt lại trạng thái nút nhạc về tắt trước khi xuất HTML
+                const bars = document.getElementById('sound-bars');
+                const statusText = document.getElementById('music-status-text');
+                bars.classList.remove('music-playing');
+                statusText.textContent = "Bật nhạc";
+
+                // Đồng bộ thuộc tính value trên thẻ input range để giữ mức âm lượng đã chỉnh khi xuất file
+                const volSlider = document.getElementById('volume-slider');
+                if (volSlider) {
+                    volSlider.setAttribute('value', volSlider.value);
+                }
+
+                const fullHTML = "<!DOCTYPE html>\n" + document.documentElement.outerHTML;
+
+                // Khôi phục lại trạng thái giao diện hiện tại của người dùng
+                if (wasOpen) container.classList.add('card-opened');
+                if (isMusicPlaying) {
+                    bars.classList.add('music-playing');
+                    statusText.textContent = "Đang phát";
+                }
+
+                const blob = new Blob([fullHTML], { type: 'text/html;charset=utf-8' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'Thiep-Chuc-Mung-20-11-Tri-An-Thay-Co.html';
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+
+                showToast("Đã tải file thiệp HTML! Bạn có thể gửi file này tặng Thầy Cô.");
+            } catch (err) {
+                showToast("Không thể tải tự động, bạn có thể dùng nút In để lưu PDF.");
+            }
+        }
+
+        function showToast(msg) {
+            const toast = document.getElementById('toast-notification');
+            const toastMsg = document.getElementById('toast-message');
+            toastMsg.textContent = msg;
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            clearTimeout(window.toastTimer);
+            window.toastTimer = setTimeout(() => {
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 3500);
+        }
+
+        /* ==========================================================================
+           4. NHẠC NỀN KHÔNG LỜI DU DƯƠNG TẠO BẰNG WEB AUDIO API (KHÔNG LINK NGOÀI)
+           ========================================================================== */
+        let audioCtx = null;
+        let masterGainNode = null;
+        let compressorNode = null;
+        let currentVolume = (Number(document.getElementById('volume-slider')?.value) || 85) / 100;
+        let isMusicPlaying = false;
+        let userManuallyMuted = false;
+        let melodyInterval = null;
+        let noteStep = 0;
+
+        // Khởi tạo chuỗi xử lý âm thanh tổng (Master Gain + Compressor chống rè khi tăng âm lượng lớn)
+        function initAudioGraph() {
+            if (!audioCtx) {
+                const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+                audioCtx = new AudioContextClass();
+            }
+            if (!masterGainNode) {
+                masterGainNode = audioCtx.createGain();
+                // Khuếch đại tín hiệu tổng lên gấp 2.4 lần ở mức 100% để nghe to, rõ trên cả loa điện thoại
+                masterGainNode.gain.setValueAtTime(currentVolume * 2.4, audioCtx.currentTime);
+
+                compressorNode = audioCtx.createDynamicsCompressor();
+                compressorNode.threshold.setValueAtTime(-14, audioCtx.currentTime);
+                compressorNode.knee.setValueAtTime(18, audioCtx.currentTime);
+                compressorNode.ratio.setValueAtTime(6, audioCtx.currentTime);
+                compressorNode.attack.setValueAtTime(0.005, audioCtx.currentTime);
+                compressorNode.release.setValueAtTime(0.2, audioCtx.currentTime);
+
+                masterGainNode.connect(compressorNode);
+                compressorNode.connect(audioCtx.destination);
+            }
+        }
+
+        // Điều chỉnh âm lượng từ thanh trượt (0% - 100%)
+        function setMusicVolume(val) {
+            const percent = Math.max(0, Math.min(100, Number(val)));
+            currentVolume = percent / 100;
+
+            const percentLabel = document.getElementById('volume-percent');
+            if (percentLabel) percentLabel.textContent = percent + '%';
+
+            if (audioCtx && masterGainNode) {
+                masterGainNode.gain.setTargetAtTime(currentVolume * 2.4, audioCtx.currentTime, 0.03);
+            }
+
+            // Nếu người dùng kéo thanh âm lượng lên khi nhạc đang tắt, tự động bật nhạc
+            if (percent > 0 && !isMusicPlaying && !userManuallyMuted) {
+                startMusic();
+            }
+        }
+
+        // Giai điệu ngũ cung ấm áp, êm dịu gợi nhớ giai điệu "Bụi Phấn" / "Người Thầy"
+        const MELODY_NOTES = [
+            // [tần số Hz, độ ngân giây]
+            [329.63, 0.8], // E4
+            [392.00, 0.8], // G4
+            [440.00, 1.4], // A4
+            [392.00, 0.7], // G4
+            [329.63, 0.7], // E4
+            [293.66, 1.4], // D4
+            [261.63, 0.8], // C4
+            [293.66, 0.8], // D4
+            [329.63, 1.5], // E4
+            [0,      0.6], // Nghỉ
+            [392.00, 0.8], // G4
+            [440.00, 0.8], // A4
+            [523.25, 1.5], // C5
+            [493.88, 0.7], // B4
+            [440.00, 0.7], // A4
+            [392.00, 1.4], // G4
+            [329.63, 0.8], // E4
+            [293.66, 0.8], // D4
+            [261.63, 1.8], // C4
+            [0,      0.8]  // Nghỉ
+        ];
+
+        function playSoftPianoNote(freq, duration) {
+            if (!audioCtx || !masterGainNode || freq <= 0) return;
+            const now = audioCtx.currentTime;
+
+            // Kết hợp 3 lớp sóng (cơ bản + quãng 8 ấm + họa âm sáng) giúp âm thanh dày và vang rõ hơn
+            const osc1 = audioCtx.createOscillator();
+            const osc2 = audioCtx.createOscillator();
+            const osc3 = audioCtx.createOscillator();
+            const gainNode = audioCtx.createGain();
+
+            osc1.type = 'triangle';
+            osc1.frequency.setValueAtTime(freq, now);
+
+            osc2.type = 'sine';
+            osc2.frequency.setValueAtTime(freq * 2, now); // Họa âm bậc 2 giúp bắt tai hơn trên loa nhỏ
+
+            osc3.type = 'sine';
+            osc3.frequency.setValueAtTime(freq * 0.5, now); // Âm trầm nền ấm áp
+
+            const overtoneGain = audioCtx.createGain();
+            overtoneGain.gain.setValueAtTime(0.35, now);
+
+            const bassGain = audioCtx.createGain();
+            bassGain.gain.setValueAtTime(0.4, now);
+
+            // Đường bao âm thanh có đỉnh cao hơn (0.42 thay vì 0.11 trước đây)
+            gainNode.gain.setValueAtTime(0.0001, now);
+            gainNode.gain.linearRampToValueAtTime(0.42, now + 0.04);
+            gainNode.gain.exponentialRampToValueAtTime(0.001, now + duration + 0.65);
+
+            osc1.connect(gainNode);
+            osc2.connect(overtoneGain);
+            overtoneGain.connect(gainNode);
+            osc3.connect(bassGain);
+            bassGain.connect(gainNode);
+
+            gainNode.connect(masterGainNode);
+
+            osc1.start(now);
+            osc2.start(now);
+            osc3.start(now);
+            osc1.stop(now + duration + 0.7);
+            osc2.stop(now + duration + 0.7);
+            osc3.stop(now + duration + 0.7);
+        }
+
+        function startMusic() {
+            try {
+                initAudioGraph();
+                if (audioCtx.state === 'suspended') {
+                    audioCtx.resume();
+                }
+
+                if (isMusicPlaying) return;
+                isMusicPlaying = true;
+
+                document.getElementById('sound-bars').classList.add('music-playing');
+                document.getElementById('music-status-text').textContent = "Đang phát";
+
+                const playNext = () => {
+                    if (!isMusicPlaying) return;
+                    const [freq, dur] = MELODY_NOTES[noteStep % MELODY_NOTES.length];
+                    playSoftPianoNote(freq, dur);
+                    noteStep++;
+                    melodyInterval = setTimeout(playNext, dur * 780);
+                };
+                playNext();
+            } catch (e) {
+                console.warn("Web Audio API không khả dụng:", e);
+            }
+        }
+
+        function stopMusic() {
+            isMusicPlaying = false;
+            clearTimeout(melodyInterval);
+            document.getElementById('sound-bars').classList.remove('music-playing');
+            document.getElementById('music-status-text').textContent = "Bật nhạc";
+        }
+
+        function toggleMusic() {
+            if (isMusicPlaying) {
+                userManuallyMuted = true;
+                stopMusic();
+            } else {
+                userManuallyMuted = false;
+                startMusic();
+            }
+        }
+
+        /* ==========================================================================
+           5. HIỆU ỨNG CÁNH HOA RƠI NHẸ NHÀNG TRÊN CANVAS RESPONSIVE
+           ========================================================================== */
+        const canvas = document.getElementById('petal-canvas');
+        const ctx = canvas.getContext('2d');
+        let petals = [];
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        const PETAL_COLORS = [
+            'rgba(229, 169, 59, 0.75)',  // Vàng hoa hướng dương
+            'rgba(244, 201, 93, 0.7)',   // Vàng nắng ấm
+            'rgba(196, 56, 56, 0.65)',   // Đỏ cánh phượng
+            'rgba(232, 116, 97, 0.6)'    // Hồng đào nhạt
+        ];
+
+        class Petal {
+            constructor(isBurst = false) {
+                this.reset(isBurst);
+            }
+
+            reset(isBurst = false) {
+                this.x = Math.random() * canvas.width;
+                this.y = isBurst ? (canvas.height * 0.2 + Math.random() * canvas.height * 0.3) : (-20 - Math.random() * 100);
+                this.size = 5 + Math.random() * 7;
+                this.speedY = 0.6 + Math.random() * 1.1;
+                this.speedX = (Math.random() - 0.5) * 0.8;
+                this.angle = Math.random() * Math.PI * 2;
+                this.spin = (Math.random() - 0.5) * 0.03;
+                this.swayOffset = Math.random() * Math.PI * 2;
+                this.color = PETAL_COLORS[Math.floor(Math.random() * PETAL_COLORS.length)];
+            }
+
+            update() {
+                this.y += this.speedY;
+                this.swayOffset += 0.02;
+                this.x += this.speedX + Math.sin(this.swayOffset) * 0.55;
+                this.angle += this.spin;
+
+                if (this.y > canvas.height + 20 || this.x < -30 || this.x > canvas.width + 30) {
+                    this.reset(false);
+                }
+            }
+
+            draw() {
+                ctx.save();
+                ctx.translate(this.x, this.y);
+                ctx.rotate(this.angle);
+                ctx.fillStyle = this.color;
+
+                // Vẽ hình cánh hoa mềm mại bằng đường cong Bezier
+                ctx.beginPath();
+                ctx.moveTo(0, -this.size);
+                ctx.bezierCurveTo(this.size * 0.8, -this.size * 0.4, this.size * 0.8, this.size * 0.6, 0, this.size);
+                ctx.bezierCurveTo(-this.size * 0.8, this.size * 0.6, -this.size * 0.8, -this.size * 0.4, 0, -this.size);
+                ctx.fill();
+                ctx.restore();
+            }
+        }
+
+        function initPetals() {
+            const count = window.innerWidth < 640 ? 22 : 38;
+            petals = [];
+            for (let i = 0; i < count; i++) {
+                const p = new Petal(false);
+                p.y = Math.random() * canvas.height;
+                petals.push(p);
+            }
+        }
+
+        function burstPetals(extraCount) {
+            for (let i = 0; i < extraCount; i++) {
+                if (petals.length < 85) {
+                    petals.push(new Petal(true));
+                }
+            }
+        }
+
+        function animatePetals() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            for (let i = 0; i < petals.length; i++) {
+                petals[i].update();
+                petals[i].draw();
+            }
+            requestAnimationFrame(animatePetals);
+        }
+
+        window.addEventListener('load', () => {
+            initPetals();
+            animatePetals();
+        });
+    </script>
+
+</body></html>

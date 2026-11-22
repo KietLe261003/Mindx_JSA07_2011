@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tri Ân Thầy Cô 20/11 - Nguyễn Hồ Hải Triều (GSB09)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Montserrat:wght@300;400;500;600;700;800&display=swap');
+    
+    body {
+      font-family: 'Montserrat', sans-serif;
+      background: radial-gradient(circle at center, #1e1b4b 0%, #0f172a 70%, #030712 100%);
+      color: #f8fafc;
+      overflow-x: hidden;
+    }
+    .font-script {
+      font-family: 'Dancing Script', cursive;
+    }
+    /* Cánh hoa rơi */
+    .petal {
+      position: fixed;
+      background: linear-gradient(135deg, #f472b6, #fb7185, #fbcfe8);
+      border-radius: 150% 0 150% 0;
+      animation: fall linear infinite;
+      z-index: 5;
+      opacity: 0.8;
+      pointer-events: none;
+    }
+    @keyframes fall {
+      0% {
+        transform: translateY(-10vh) translateX(0) rotate(0deg);
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(110vh) translateX(120px) rotate(360deg);
+        opacity: 0.1;
+      }
+    }
+    .glass-box {
+      background: rgba(255, 255, 255, 0.04);
+      backdrop-filter: blur(16px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+    }
+    .glow-title {
+      text-shadow: 0 0 30px rgba(244, 114, 182, 0.6), 0 0 60px rgba(168, 85, 247, 0.4);
+    }
+    .gold-gradient {
+      background: linear-gradient(135deg, #fde047 0%, #facc15 50%, #ca8a04 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between p-4 sm:p-8 relative">
+
+  <!-- Thùng chứa cánh hoa rơi -->
+  <div id="petalsContainer"></div>
+
+  <!-- Nhạc nền du dương -->
+  <audio id="bgMusic" loop>
+    <source src="https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf756.mp3?filename=gentle-piano-ambient-111195.mp3" type="audio/mpeg">
+  </audio>
+
+  <!-- Nút Bật/Tắt Nhạc & Pháo hoa -->
+  <div class="fixed top-6 right-6 z-50 flex items-center gap-3">
+    <button onclick="triggerFireworks()" class="bg-amber-500/20 hover:bg-amber-500/40 border border-amber-500/40 text-amber-200 px-4 py-2 rounded-full backdrop-blur-md shadow-lg transition text-xs sm:text-sm font-semibold flex items-center gap-2">
+      <i class="fa-solid fa-wand-magic-sparkles text-amber-400"></i> Pháo Hoa
+    </button>
+    <button onclick="toggleMusic()" id="musicToggleBtn" class="bg-pink-500/20 hover:bg-pink-500/40 border border-pink-500/40 text-pink-200 px-4 py-2 rounded-full backdrop-blur-md shadow-lg transition text-xs sm:text-sm font-semibold flex items-center gap-2">
+      <i id="musicIcon" class="fa-solid fa-music"></i>
+      <span id="musicText">Bật nhạc</span>
+    </button>
+  </div>
+
+  <!-- Phần Header -->
+  <header class="w-full max-w-5xl mx-auto text-center pt-8 pb-4 relative z-20">
+    <div class="inline-flex items-center gap-2 bg-pink-500/10 border border-pink-500/30 px-6 py-2 rounded-full text-pink-300 text-xs sm:text-sm font-semibold mb-4 tracking-widest uppercase shadow-xl">
+      <i class="fa-solid fa-award text-amber-400"></i> Chào Mừng Ngày Nhà Giáo Việt Nam 20/11
+    </div>
+    <h1 class="text-4xl sm:text-7xl font-extrabold glow-title mb-4 leading-tight">
+      Tri Ân Thầy Cô <br><span class="font-script text-pink-400 text-5xl sm:text-8xl">Người Lái Đò Thầm Lặng</span>
+    </h1>
+    <p class="text-slate-300 text-sm sm:text-base max-w-2xl mx-auto leading-relaxed">
+      Nơi ươm mầm tri thức, chắp cánh những ước mơ bay cao. Em xin gửi trọn tấm lòng thành kính và biết ơn sâu sắc nhất đến các thầy cô giáo kính yêu.
+    </p>
+  </header>
+
+  <!-- Nội dung chính & Các lời chúc ý nghĩa -->
+  <main class="w-full max-w-5xl mx-auto py-8 relative z-20 space-y-8">
+    
+    <!-- Lời chúc trung tâm (Thiệp lớn) -->
+    <div class="glass-box rounded-3xl p-6 sm:p-10 relative overflow-hidden text-center border-pink-500/30">
+      <div class="absolute -top-12 -right-12 w-48 h-48 bg-pink-500/15 rounded-full blur-3xl"></div>
+      <div class="absolute -bottom-12 -left-12 w-48 h-48 bg-purple-500/15 rounded-full blur-3xl"></div>
+
+      <div class="text-pink-400 text-3xl mb-3"><i class="fa-solid fa-quote-left"></i></div>
+      <h3 class="text-2xl sm:text-3xl font-bold font-script gold-gradient mb-4">Lời Chúc Từ Đáy Lòng</h3>
+      <p class="text-slate-200 text-base sm:text-xl leading-relaxed italic max-w-3xl mx-auto mb-6">
+        "Nhân ngày Nhà giáo Việt Nam 20/11, em xin kính chúc các thầy cô luôn dồi dào sức khỏe, luôn giữ vững ngọn lửa nhiệt huyết trên bục giảng để tiếp tục dẫn dắt nhiều thế hệ học trò bước tới chân trời tri thức mới. Cơn mưa bụi trên bục giảng hay những sợi tóc vương màu phấn trắng đều là minh chứng cho sự hy sinh thầm lặng mà cao quý của thầy cô!"
+      </p>
+
+      <!-- Thông tin cá nhân học sinh -->
+      <div class="inline-flex flex-wrap items-center justify-center gap-3 sm:gap-6 pt-6 border-t border-white/10 text-xs sm:text-sm text-slate-300">
+        <div class="flex items-center gap-2 bg-white/5 px-4 py-2 rounded-full border border-white/10">
+          <i class="fa-solid fa-user-graduate text-pink-400"></i>
+          <span>Học sinh: <strong class="text-white">Nguyễn Hồ Hải Triều</strong></span>
+        </div>
+        <div class="flex items-center gap-2 bg-white/5 px-4 py-2 rounded-full border border-white/10">
+          <i class="fa-solid fa-cake-candles text-amber-400"></i>
+          <span>Tuổi: <strong class="text-white">14</strong></span>
+        </div>
+        <div class="flex items-center gap-2 bg-white/5 px-4 py-2 rounded-full border border-white/10">
+          <i class="fa-solid fa-school text-emerald-400"></i>
+          <span>Lớp: <strong class="text-white">GSB09</strong></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Lưới các lời chúc ý nghĩa theo chủ đề -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <!-- Thẻ 1 -->
+      <div class="glass-box p-6 rounded-2xl hover:border-pink-500/50 transition duration-300 flex flex-col justify-between">
+        <div>
+          <div class="w-12 h-12 rounded-xl bg-pink-500/20 text-pink-300 flex items-center justify-center text-xl mb-4">
+            <i class="fa-solid fa-heart"></i>
+          </div>
+          <h4 class="text-lg font-bold text-white mb-2">Lời chúc Sức Khỏe & Bình An</h4>
+          <p class="text-slate-300 text-sm leading-relaxed">
+            "Kính chúc thầy cô luôn tràn đầy sức khỏe, luôn vui vẻ và giữ mãi nụ cười rạng rỡ trên môi để vượt qua mọi khó khăn trong sự nghiệp trồng người."
+          </p>
+        </div>
+        <span class="text-[11px] text-pink-400 mt-4 uppercase tracking-wider font-semibold">Tri ân 20/11</span>
+      </div>
+
+      <!-- Thẻ 2 -->
+      <div class="glass-box p-6 rounded-2xl hover:border-purple-500/50 transition duration-300 flex flex-col justify-between">
+        <div>
+          <div class="w-12 h-12 rounded-xl bg-purple-500/20 text-purple-300 flex items-center justify-center text-xl mb-4">
+            <i class="fa-solid fa-book-open"></i>
+          </div>
+          <h4 class="text-lg font-bold text-white mb-2">Lời chúc Tri Thức & Thành Công</h4>
+          <p class="text-slate-300 text-sm leading-relaxed">
+            "Cảm ơn thầy cô đã truyền đạt cho chúng em không chỉ kiến thức sách vở mà còn cả những bài học làm người sâu sắc. Chúc các thầy cô luôn gặt hái được nhiều thành công vang dội."
+          </p>
+        </div>
+        <span class="text-[11px] text-purple-400 mt-4 uppercase tracking-wider font-semibold">Tri ân 20/11</span>
+      </div>
+
+      <!-- Thẻ 3 -->
+      <div class="glass-box p-6 rounded-2xl hover:border-amber-500/50 transition duration-300 flex flex-col justify-between">
+        <div>
+          <div class="w-12 h-12 rounded-xl bg-amber-500/20 text-amber-300 flex items-center justify-center text-xl mb-4">
+            <i class="fa-solid fa-hands-holding-child"></i>
+          </div>
+          <h4 class="text-lg font-bold text-white mb-2">Lòng Biết Ơn Vô Bờ Bến</h4>
+          <p class="text-slate-300 text-sm leading-relaxed">
+            "Dẫu đi qua muôn phương trời, chúng em vẫn mãi nhớ về mái trường xưa, nhớ hình bóng thầy cô tận tụy bên trang giáo án. Em xin hứa sẽ luôn chăm ngoan để không phụ lòng mong mỏi."
+          </p>
+        </div>
+        <span class="text-[11px] text-amber-400 mt-4 uppercase tracking-wider font-semibold">Tri ân 20/11</span>
+      </div>
+    </div>
+
+    <!-- Nút tương tác bắn pháo hoa -->
+    <div class="text-center pt-4">
+      <button onclick="triggerFireworks()" class="bg-gradient-to-r from-pink-500 via-purple-600 to-indigo-600 hover:opacity-90 text-white font-bold px-8 py-4 rounded-full shadow-2xl transition transform hover:scale-105 flex items-center gap-3 mx-auto text-base">
+        <i class="fa-solid fa-wand-magic-sparkles text-amber-300 animate-spin"></i> Bắn Pháo Hoa & Gửi Trọn Tri Ân
+      </button>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer class="w-full max-w-5xl mx-auto text-center pt-8 pb-4 text-xs text-slate-500 border-t border-white/5 relative z-20">
+    <p>© 2026 - Trang web tri ân thầy cô thực hiện bởi <strong class="text-slate-300">Nguyễn Hồ Hải Triều</strong> (14 tuổi, lớp <strong class="text-slate-300">GSB09</strong>).</p>
+  </footer>
+
+  <script>
+    // 1. Tạo hiệu ứng cánh hoa rơi
+    const petalsContainer = document.getElementById('petalsContainer');
+    const petalCount = 30;
+
+    for (let i = 0; i < petalCount; i++) {
+      const petal = document.createElement('div');
+      petal.classList.add('petal');
+      
+      const size = Math.random() * 12 + 10;
+      petal.style.width = `${size}px`;
+      petal.style.height = `${size * 1.5}px`;
+      petal.style.left = `${Math.random() * 100}vw`;
+      petal.style.animationDuration = `${Math.random() * 6 + 4}s`;
+      petal.style.animationDelay = `${Math.random() * 5}s`;
+      
+      petalsContainer.appendChild(petal);
+    }
+
+    // 2. Xử lý nhạc nền
+    const music = document.getElementById('bgMusic');
+    const musicIcon = document.getElementById('musicIcon');
+    const musicText = document.getElementById('musicText');
+    let isPlaying = false;
+
+    function toggleMusic() {
+      if (isPlaying) {
+        music.pause();
+        musicIcon.className = 'fa-solid fa-music';
+        musicText.textContent = 'Bật nhạc';
+        isPlaying = false;
+      } else {
+        music.muted = false;
+        music.play().then(() => {
+          musicIcon.className = 'fa-solid fa-music animate-spin text-pink-400';
+          musicText.textContent = 'Tắt nhạc';
+          isPlaying = true;
+        }).catch(e => console.log("Cần tương tác trang web"));
+      }
+    }
+
+    // Tự động bật nhạc khi click lần đầu trên trang
+    window.addEventListener('click', () => {
+      if (!isPlaying) {
+        music.muted = false;
+        music.play().then(() => {
+          musicIcon.className = 'fa-solid fa-music animate-spin text-pink-400';
+          musicText.textContent = 'Tắt nhạc';
+          isPlaying = true;
+        }).catch(() => {});
+      }
+    }, { once: true });
+
+    // 3. Hiệu ứng thông báo pháo hoa sinh động
+    function triggerFireworks() {
+      alert("✨ Chúc mừng ngày 20/11! Cảm ơn bạn Nguyễn Hồ Hải Triều (Lớp GSB09) đã gửi những lời chúc tri ân tuyệt vời nhất đến thầy cô! Chúc các thầy cô luôn tràn đầy hạnh phúc! 🌸");
+    }
+  </script>
+</body>
+</html>

@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>THE TIMELESS GARDEN — Khu Vườn Của Những Điều Tri Ân (20.11)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;1,400;1,600&family=DM+Sans:wght@400;500;700&family=Playfair+Display:ital,wght@0,500;0,700;1,500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/animations.css" />
+</head>
+<body>
+  <!-- Ánh sáng theo con trỏ chuột -->
+  <div id="cursor-light" aria-hidden="true"></div>
+
+  <!-- Canvas nền: Hạt ánh sáng, đom đóm, cánh hoa, sao -->
+  <canvas id="garden-canvas" aria-hidden="true"></canvas>
+
+  <!-- Điều khiển tối giản góc màn hình -->
+  <aside class="floating-controls" aria-label="Điều khiển trải nghiệm">
+    <button id="toggle-audio" class="control-pill magnetic" type="button" aria-pressed="false" title="Bật/Tắt âm thanh piano & gió">
+      <span class="pulse-dot"></span>
+      <span class="control-label">Âm thanh: Tắt</span>
+    </button>
+    <button id="toggle-motion" class="control-pill magnetic" type="button" aria-pressed="false" title="Giảm chuyển động">
+      <span class="control-label">Chuyển động: Mượt</span>
+    </button>
+  </aside>
+
+  <!-- MÀN HÌNH MỞ ĐẦU: THE FIRST LIGHT -->
+  <section id="scene-intro" class="scene active" aria-label="Màn hình mở đầu">
+    <div class="intro-stage">
+      <div class="book-3d-wrapper" id="intro-book">
+        <div class="book-glow"></div>
+        <div class="book-3d">
+          <div class="book-back"></div>
+          <div class="book-pages-stack">
+            <div class="flying-leaf leaf-1"></div>
+            <div class="flying-leaf leaf-2"></div>
+            <div class="flying-leaf leaf-3"></div>
+          </div>
+          <div class="book-page-right">
+            <div class="page-inner">
+              <p class="eyebrow">20 · 11</p>
+              <p id="typewriter-line-1" class="type-text"></p>
+              <p id="typewriter-line-2" class="type-text"></p>
+              <h1 id="intro-title" class="gold-shimmer hidden-reveal">HAPPY VIETNAMESE TEACHERS' DAY – 20.11</h1>
+              <button id="btn-open-garden" class="btn-editorial magnetic hidden-reveal" type="button">
+                <span>OPEN THE GARDEN</span>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                  <path d="M5 12h14M13 6l6 6-6 6" />
+                </svg>
+              </button>
+            </div>
+          </div>
+          <div class="book-cover-front">
+            <div class="cover-ornament">
+              <span>THE TIMELESS</span>
+              <strong>GARDEN</strong>
+              <small>Ký ức &amp; Tri ân</small>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- KHÔNG GIAN CHÍNH: THE TIMELESS GARDEN -->
+  <main id="scene-garden" class="scene" aria-label="Khu vườn tri ân" hidden>
+    <div class="sunbeams" aria-hidden="true"></div>
+
+    <!-- Điều hướng hành trình nổi bên cạnh -->
+    <nav class="chapter-dots" aria-label="Các phân cảnh trong khu vườn">
+      <button class="dot active" data-target="chapter-tree" aria-label="Cây Cổ Thụ Tri Ân"><span>01 · Cây Tri Ân</span></button>
+      <button class="dot" data-target="chapter-portals" aria-label="Ba Cánh Cổng Ký Ức"><span>02 · Cổng Ký Ức</span></button>
+      <button class="dot" data-target="chapter-notebook" aria-label="Viết Lời Tri Ân"><span>03 · Sổ Tay Tri Ân</span></button>
+      <button class="dot" data-target="chapter-bloom" aria-label="Đóa Hoa Bất Ngờ"><span>04 · Đóa Hoa Kỳ Diệu</span></button>
+      <button class="dot" data-target="chapter-finale" aria-label="Lá Thư Gửi Tương Lai"><span>05 · Gửi Tương Lai</span></button>
+    </nav>
+
+    <!-- PHÂN CẢNH 1: INTERACTION 1 – THE TREE OF GRATITUDE -->
+    <section id="chapter-tree" class="garden-chapter parallax-layer" data-depth="0.03">
+      <header class="chapter-header">
+        <span class="chapter-num">I. THE TREE OF GRATITUDE</span>
+        <h2>Cây Cổ Thụ Tri Thức</h2>
+        <p>Chạm nhẹ để lắng nghe lời thì thầm của những chiếc lá, hoặc nhấp chọn để giữ lại một tấm thiệp ký ức.</p>
+      </header>
+
+      <div class="tree-sanctuary">
+        <svg class="ancient-tree-svg" viewBox="0 0 800 620" role="img" aria-label="Cây cổ thụ tri ân với những chiếc lá phát sáng">
+          <defs>
+            <radialGradient id="canopyGlow" cx="50%" cy="40%" r="50%">
+              <stop offset="0%" stop-color="#D8B56D" stop-opacity="0.28" />
+              <stop offset="60%" stop-color="#183D35" stop-opacity="0.15" />
+              <stop offset="100%" stop-color="#101B2D" stop-opacity="0" />
+            </radialGradient>
+            <linearGradient id="trunkGrad" x1="0%" y1="100%" x2="0%" y2="0%">
+              <stop offset="0%" stop-color="#0d1522" />
+              <stop offset="50%" stop-color="#2a2421" />
+              <stop offset="100%" stop-color="#5c4938" />
+            </linearGradient>
+          </defs>
+          <circle cx="400" cy="260" r="260" fill="url(#canopyGlow)" />
+          <path class="tree-path" d="M370,610 C375,510 385,430 382,350 C340,290 250,260 180,210 M430,610 C425,510 415,430 418,350 C460,290 550,250 620,200 M400,370 C400,290 395,210 400,130 M355,310 C310,240 280,170 260,120 M445,300 C490,230 520,170 545,115 M320,265 C250,275 190,300 140,290 M485,260 C550,270 610,295 660,285" stroke="url(#trunkGrad)" stroke-width="14" stroke-linecap="round" fill="none" />
+          <path d="M350,610 Q400,560 450,610 Z" fill="#183D35" opacity="0.6" />
+        </svg>
+
+        <div id="leaf-whisper" class="leaf-whisper" role="status" aria-live="polite"></div>
+        <div id="glowing-leaves-container" class="leaves-layer"></div>
+      </div>
+
+      <div id="leaf-card-modal" class="editorial-modal" hidden>
+        <div class="modal-backdrop"></div>
+        <article class="leaf-card-sheet">
+          <button class="modal-close" type="button" aria-label="Đóng thiệp">&times;</button>
+          <div class="leaf-emblem">✦</div>
+          <p class="card-tag">LỜI TRI ÂN TỪ KHU VƯỜN</p>
+          <blockquote id="leaf-card-quote"></blockquote>
+          <p id="leaf-card-sub" class="card-subtext"></p>
+        </article>
+      </div>
+    </section>
+
+    <!-- PHÂN CẢNH 2: INTERACTION 2 – THE MEMORY PORTALS -->
+    <section id="chapter-portals" class="garden-chapter">
+      <header class="chapter-header">
+        <span class="chapter-num">II. THE MEMORY PORTALS</span>
+        <h2>Ba Cánh Cổng Ký Ức</h2>
+        <p>Bước qua từng vòm ánh sáng để chạm vào những miền ký ức không bao giờ phai.</p>
+      </header>
+
+      <div class="portals-stage">
+        <button class="portal-gateway portal-arch magnetic" data-portal="first-lesson" type="button">
+          <div class="portal-aura"></div>
+          <span class="portal-index">01</span>
+          <h3>FIRST LESSON</h3>
+          <p>Những bài học đầu tiên</p>
+          <span class="portal-cta">Bước vào ký ức &rarr;</span>
+        </button>
+
+        <button class="portal-gateway portal-oval magnetic" data-portal="unforgettable-moments" type="button">
+          <div class="portal-aura"></div>
+          <span class="portal-index">02</span>
+          <h3>UNFORGETTABLE MOMENTS</h3>
+          <p>Những kỷ niệm với thầy cô</p>
+          <span class="portal-cta">Mở khung ký ức &rarr;</span>
+        </button>
+
+        <button class="portal-gateway portal-star magnetic" data-portal="light-you-left" type="button">
+          <div class="portal-aura"></div>
+          <span class="portal-index">03</span>
+          <h3>THE LIGHT YOU LEFT</h3>
+          <p>Ánh sáng tri thức</p>
+          <span class="portal-cta">Ngắm bầu trời sao &rarr;</span>
+        </button>
+      </div>
+
+      <!-- Không gian tương tác mở rộng của 3 cánh cổng -->
+      <div id="portal-viewer" class="portal-viewer" hidden>
+        <div class="portal-viewer-inner">
+          <button id="close-portal-viewer" class="modal-close" type="button" aria-label="Trở lại khu vườn">&times;</button>
+
+          <!-- Nội dung Cổng 1: FIRST LESSON -->
+          <div id="view-first-lesson" class="portal-content" hidden>
+            <div class="chalkboard-scene">
+              <div class="sunlight-beam"></div>
+              <div class="chalkboard">
+                <span class="chalk-date">Ngày 20 tháng 11</span>
+                <p id="chalk-text" class="handwriting-chalk"></p>
+                <div class="chalk-tray">
+                  <span class="chalk-piece"></span>
+                  <span class="chalk-piece short"></span>
+                </div>
+              </div>
+              <div class="wooden-desk-silhouette"></div>
+            </div>
+          </div>
+
+          <!-- Nội dung Cổng 2: UNFORGETTABLE MOMENTS -->
+          <div id="view-unforgettable-moments" class="portal-content" hidden>
+            <div class="polaroid-universe">
+              <div class="polaroid-toolbar">
+                <p>Nhấp vào từng bức ảnh để đọc lời nhắn, hoặc tải ảnh kỷ niệm của bạn lên:</p>
+                <label class="upload-memory-btn magnetic">
+                  <input type="file" id="upload-polaroid-input" accept="image/*" hidden />
+                  <span>+ Thay ảnh kỷ niệm của bạn</span>
+                </label>
+              </div>
+              <div id="polaroid-gallery" class="polaroid-gallery"></div>
+              <p id="polaroid-caption-display" class="polaroid-active-note">Chọn một khung ảnh lơ lửng để mở lời nhắn...</p>
+            </div>
+          </div>
+
+          <!-- Nội dung Cổng 3: THE LIGHT YOU LEFT -->
+          <div id="view-light-you-left" class="portal-content" hidden>
+            <div class="constellation-cosmos">
+              <svg id="book-constellation-svg" viewBox="0 0 600 320" role="img" aria-label="Chòm sao hình quyển sách">
+                <g class="constellation-lines">
+                  <path d="M120,210 L290,240 L290,95 L120,70 Z" />
+                  <path d="M480,210 L310,240 L310,95 L480,70 Z" />
+                  <path d="M290,240 L300,252 L310,240" />
+                  <path d="M150,115 L255,130 M150,150 L255,165 M345,130 L450,115 M345,165 L450,150" />
+                </g>
+                <g class="constellation-stars">
+                  <circle cx="120" cy="70" r="4" /><circle cx="290" cy="95" r="5" />
+                  <circle cx="290" cy="240" r="5" /><circle cx="120" cy="210" r="4" />
+                  <circle cx="480" cy="70" r="4" /><circle cx="310" cy="95" r="5" />
+                  <circle cx="310" cy="240" r="5" /><circle cx="480" cy="210" r="4" />
+                  <circle cx="300" cy="252" r="4" /><circle cx="150" cy="115" r="3" />
+                  <circle cx="255" cy="130" r="3" /><circle cx="345" cy="130" r="3" />
+                  <circle cx="450" cy="115" r="3" />
+                </g>
+              </svg>
+              <blockquote class="cosmos-quote">
+                “Thầy cô không chỉ trao cho chúng em kiến thức, mà còn trao cho chúng em ánh sáng để tự tìm ra con đường của mình.”
+              </blockquote>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PHÂN CẢNH 3: INTERACTION 3 – WRITE YOUR GRATITUDE -->
+    <section id="chapter-notebook" class="garden-chapter">
+      <header class="chapter-header">
+        <span class="chapter-num">III. WRITE YOUR GRATITUDE</span>
+        <h2>Cuốn Sổ Tay Tri Ân</h2>
+        <p>Gửi gắm những dòng tâm tư chân thành nhất và lưu giữ thành một tấm thiệp nghệ thuật.</p>
+      </header>
+
+      <div class="notebook-stage">
+        <!-- Trạng thái 1: Sổ tay mở để viết -->
+        <div id="notebook-editor" class="open-notebook">
+          <div class="notebook-spine"></div>
+          <div class="notebook-page left-page">
+            <span class="page-label">GỬI NGƯỜI THẮP SÁNG</span>
+            <div class="ink-field">
+              <label for="teacher-name">Kính gửi Thầy / Cô</label>
+              <input type="text" id="teacher-name" placeholder="Ví dụ: Cô Nguyễn Minh Anh..." maxlength="60" />
+            </div>
+            <div class="ink-field">
+              <label for="sender-name">Người gửi tri ân</label>
+              <input type="text" id="sender-name" placeholder="Tên của bạn hoặc tập thể lớp..." maxlength="60" />
+            </div>
+            <div class="style-selectors">
+              <div class="selector-group">
+                <span>Phong cách thiệp</span>
+                <div class="pill-options" id="card-style-options">
+                  <button type="button" class="style-chip active" data-style="ivory">Giấy Ngà Cổ Điển</button>
+                  <button type="button" class="style-chip" data-style="navy">Đêm Sao Hoàng Kim</button>
+                  <button type="button" class="style-chip" data-style="rose">Cánh Hoa Phấn</button>
+                </div>
+              </div>
+              <div class="selector-group">
+                <span>Màu mực viết</span>
+                <div class="ink-swatches" id="ink-color-options">
+                  <button type="button" class="swatch active" data-ink="#101B2D" style="background:#101B2D" aria-label="Mực Xanh Đêm"></button>
+                  <button type="button" class="swatch" data-ink="#8C5E2A" style="background:#8C5E2A" aria-label="Mực Nâu Vàng"></button>
+                  <button type="button" class="swatch" data-ink="#8E3B46" style="background:#8E3B46" aria-label="Mực Đỏ Trầm"></button>
+                  <button type="button" class="swatch" data-ink="#183D35" style="background:#183D35" aria-label="Mực Xanh Rừng"></button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="notebook-page right-page">
+            <span class="page-label">LỜI NHẮN GỬI TỪ TRÁI TIM</span>
+            <textarea id="gratitude-message" rows="6" placeholder="Viết những điều bạn luôn muốn nói với thầy cô nhân ngày 20/11..." maxlength="420"></textarea>
+            <div class="notebook-actions">
+              <button id="btn-submit-gratitude" class="btn-editorial magnetic" type="button">
+                <span>GỬI LỜI TRI ÂN</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Trạng thái 2: Tấm thiệp hoàn chỉnh phát sáng -->
+        <div id="completed-card-wrapper" class="completed-card-wrapper" hidden>
+          <div id="rendered-greeting-card" class="greeting-card-artifact style-ivory">
+            <div class="card-border-ornament">
+              <p class="card-date">20 · 11 — THE TIMELESS GARDEN</p>
+              <p class="card-salutation">Kính gửi <strong id="out-teacher">Thầy Cô</strong>,</p>
+              <p id="out-message" class="card-handwritten-body"></p>
+              <p class="card-signoff">Trân trọng &amp; Biết ơn,<br /><strong id="out-sender">Học trò của Thầy Cô</strong></p>
+            </div>
+          </div>
+
+          <div class="card-toolbar">
+            <button id="btn-copy-wish" class="control-pill magnetic" type="button">Sao chép lời chúc</button>
+            <button id="btn-download-png" class="control-pill gold magnetic" type="button">Tải thiệp thành ảnh PNG</button>
+            <button id="btn-new-wish" class="control-pill magnetic" type="button">Tạo một lời chúc mới</button>
+          </div>
+          <p id="card-feedback" class="feedback-toast" role="status" aria-live="polite"></p>
+        </div>
+      </div>
+    </section>
+
+    <!-- PHÂN CẢNH 4: INTERACTION 4 – THE BLOOMING SURPRISE -->
+    <section id="chapter-bloom" class="garden-chapter">
+      <header class="chapter-header">
+        <span class="chapter-num">IV. THE BLOOMING SURPRISE</span>
+        <h2>Đóa Hoa Của Thanh Xuân</h2>
+        <p>Ở tận cùng khu vườn có một nụ hoa đang ngủ yên. Hãy chạm vào để đánh thức ánh sáng bên trong.</p>
+      </header>
+
+      <div class="bloom-sanctuary">
+        <button id="magic-flower-btn" class="magic-flower" type="button" aria-expanded="false" aria-label="Chạm để nở hoa">
+          <div class="flower-halo"></div>
+          <div class="flower-core"></div>
+          <!-- Các lớp cánh hoa -->
+          <span class="petal outer p1"></span>
+          <span class="petal outer p2"></span>
+          <span class="petal outer p3"></span>
+          <span class="petal outer p4"></span>
+          <span class="petal outer p5"></span>
+          <span class="petal outer p6"></span>
+          <span class="petal inner p7"></span>
+          <span class="petal inner p8"></span>
+          <span class="petal inner p9"></span>
+          <span class="petal inner p10"></span>
+          <span class="petal inner p11"></span>
+          <span class="petal inner p12"></span>
+          <span class="flower-hint">Chạm để nở hoa</span>
+        </button>
+
+        <div id="bloom-message-box" class="bloom-revelation" hidden>
+          <p class="bloom-quote">
+            “Có thể chúng em sẽ quên một vài công thức, một vài bài kiểm tra, nhưng sẽ luôn nhớ những người đã giúp chúng em trưởng thành.”
+          </p>
+          <h3 class="bloom-headline">CẢM ƠN THẦY CÔ – VÌ ĐÃ LÀ MỘT PHẦN THANH XUÂN CỦA CHÚNG EM.</h3>
+        </div>
+      </div>
+    </section>
+
+    <!-- PHẦN KẾT: A LETTER TO THE FUTURE -->
+    <footer id="chapter-finale" class="garden-chapter finale-stage">
+      <div class="constellation-2011" aria-hidden="true">
+        <svg viewBox="0 0 640 160">
+          <text x="50%" y="55%" text-anchor="middle" dominant-baseline="middle" class="star-numerals">20 · 11</text>
+        </svg>
+      </div>
+
+      <article class="future-letter">
+        <span class="chapter-num">V. A LETTER TO THE FUTURE</span>
+        <div class="letter-body">
+          <p>Gửi những người đã chọn gieo hạt tri thức và kiên nhẫn chờ đợi những mầm xanh lớn lên.</p>
+          <p>Chúc thầy cô luôn mạnh khỏe, hạnh phúc và giữ mãi ngọn lửa yêu nghề.</p>
+          <p>Chúng em biết ơn vì đã được gặp thầy cô trên hành trình trưởng thành.</p>
+        </div>
+        <h2 class="finale-signature">HAPPY VIETNAMESE TEACHERS' DAY 20.11</h2>
+        <button id="btn-revisit" class="btn-editorial magnetic" type="button">
+          <span>REVISIT THE GARDEN</span>
+        </button>
+      </article>
+    </footer>
+  </main>
+
+  <script src="js/audio.js"></script>
+  <script src="js/particles.js"></script>
+  <script src="js/greeting-card.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

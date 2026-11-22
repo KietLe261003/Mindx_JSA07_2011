@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#173d35">
+  <title>Tri Ân Thầy Cô | 20-11</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:wght@500;600;700&display=swap" rel="stylesheet">
+  <style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500;1,600&display=swap');
+:root{--forest:#173d35;--forest2:#245448;--cream:#f7f3e9;--paper:#fffdf7;--gold:#c9a76b;--muted:#aebdb2;--ink:#263c34}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;background:var(--forest);color:var(--cream);overflow-x:hidden}
+.ambient{position:fixed;border-radius:50%;filter:blur(90px);opacity:.14;pointer-events:none;z-index:0}
+.ambient-one{width:420px;height:420px;background:#c7a46b;top:5%;left:-230px}
+.ambient-two{width:500px;height:500px;background:#5b9a79;right:-280px;top:48%}
+.topbar{height:82px;padding:0 7.5%;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #ffffff16;position:relative;z-index:3}
+.brand{display:flex;align-items:center;gap:12px;color:var(--cream);text-decoration:none;font-weight:700;letter-spacing:2px;font-size:12px}
+.brand-mark{font-size:29px;color:var(--gold)}.brand small{display:block;color:#a9b9ae;font-size:9px;letter-spacing:4px;margin-top:3px}
+.music-toggle{border:1px solid #ffffff38;color:var(--cream);background:#ffffff0b;border-radius:30px;padding:10px 16px;display:flex;align-items:center;gap:9px;font:600 12px 'DM Sans';cursor:pointer;transition:.25s}
+.music-toggle:hover{background:#ffffff19;border-color:var(--gold)}.music-icon{font-size:19px;color:var(--gold)}
+.sound-bars{display:flex;align-items:center;gap:2px;height:14px;margin-left:3px}.sound-bars i{height:4px;width:2px;background:var(--gold);border-radius:3px}.music-toggle.playing .sound-bars i{animation:equalize .65s infinite alternate}.music-toggle.playing .sound-bars i:nth-child(2){animation-delay:.2s}.music-toggle.playing .sound-bars i:nth-child(3){animation-delay:.4s}
+@keyframes equalize{to{height:13px}}
+main{position:relative;z-index:1}.hero{min-height:650px;padding:85px 9% 105px;display:grid;grid-template-columns:1fr 1fr;align-items:center;gap:5%;position:relative;max-width:1440px;margin:auto}
+.hero-copy{max-width:590px;z-index:1}.eyebrow{display:flex;align-items:center;gap:12px;color:var(--gold);font-size:10px;font-weight:700;letter-spacing:3px}.eyebrow span{width:25px;height:1px;background:var(--gold)}
+h1,h2{font-family:'Playfair Display',serif;font-weight:500}h1{font-size:clamp(48px,6vw,78px);line-height:1.13;letter-spacing:-2px;margin:25px 0}.hero h1 em,.section-heading h2 em,.closing h2 em{color:var(--gold);font-weight:500}
+.intro{max-width:480px;color:#c1cec4;font-size:15px;line-height:1.9}
+.primary-link{display:inline-flex;align-items:center;gap:24px;margin-top:34px;padding:14px 20px;border:1px solid var(--gold);color:var(--cream);text-decoration:none;font-size:11px;font-weight:700;letter-spacing:1.5px;transition:.25s}.primary-link span{font-size:18px;color:var(--gold)}.primary-link:hover{background:var(--gold);color:var(--forest)}.primary-link:hover span{color:var(--forest)}
+.hero-art{height:440px;position:relative;display:flex;align-items:center;justify-content:center}.art-glow{position:absolute;width:350px;height:350px;background:#d1aa6b18;border-radius:50%;filter:blur(15px)}.sun-disc{position:absolute;width:270px;height:270px;border:1px solid #c9a76b55;border-radius:50%;background:linear-gradient(140deg,#c9a76b1c,#ffffff03);top:30px;right:12%}
+.book{position:absolute;width:225px;height:62px;border-radius:5px 8px 8px 5px;transform:rotate(-9deg);box-shadow:0 20px 25px #081e18aa}.book-back{background:#b68e56;bottom:75px;right:14%;height:30px}.book-front{bottom:103px;right:13%;background:#eee3c9;border:5px solid #d4bd91;display:grid;place-items:center;color:#426154;font-family:'Playfair Display';font-size:12px;text-align:center;line-height:1.5;letter-spacing:2px}
+.stem{position:absolute;width:3px;height:245px;background:#77916b;bottom:130px;right:44%;transform-origin:bottom;border-radius:10px}.stem-a{transform:rotate(-18deg)}.stem-b{height:225px;right:48%;transform:rotate(13deg)}.stem-c{height:205px;right:39%;transform:rotate(25deg)}
+.flower{position:absolute;width:75px;height:75px;right:38%;top:68px}.flower b{position:absolute;width:18px;height:28px;background:#d7a8a0;border-radius:50%;left:29px;top:0;transform-origin:9px 37px;box-shadow:0 0 0 0 #000}
+.flower b:before,.flower b:after{content:"";position:absolute;width:18px;height:28px;background:#d7a8a0;border-radius:50%;left:0;top:0;transform:rotate(60deg);transform-origin:9px 37px}.flower b:after{transform:rotate(120deg)}
+.flower:before,.flower:after{content:"";position:absolute;width:18px;height:28px;background:#d7a8a0;border-radius:50%;left:29px;top:0;transform:rotate(180deg);transform-origin:9px 37px}
+.flower-a{right:38%;top:61px}.flower-b{right:54%;top:117px;transform:scale(.78)}.flower-b b,.flower-b b:before,.flower-b b:after,.flower-b:before,.flower-b:after{background:#e6c58b}.flower-c{right:29%;top:150px;transform:scale(.65)}.flower-c b,.flower-c b:before,.flower-c b:after,.flower-c:before,.flower-c:after{background:#c27e72}
+.flower b{z-index:2}.flower b{background:#d7a8a0}.flower b:after{background:#d7a8a0}
+.flower:after{transform:rotate(240deg);transform-origin:9px 37px}.flower:before{transform:rotate(300deg);transform-origin:9px 37px}
+.flower b{background:#d7a8a0}.flower b:before{background:#d7a8a0}.flower b:after{background:#d7a8a0}
+.leaf{position:absolute;width:42px;height:20px;background:#78916c;border-radius:100% 0 100% 0;right:45%;top:245px;transform:rotate(25deg)}.leaf-b{right:33%;top:230px;transform:rotate(70deg) scale(.8)}.leaf-c{right:52%;top:285px;transform:rotate(-20deg) scale(.75)}
+.ribbon{position:absolute;right:40%;bottom:105px;width:42px;height:30px;border:5px solid #c9a76b;border-radius:50%;transform:rotate(15deg)}.art-caption{position:absolute;bottom:25px;right:12%;font-family:'Playfair Display';font-style:italic;color:#aebdb2;font-size:13px}.sparkle{position:absolute;color:var(--gold)}.s1{top:70px;right:18%;font-size:22px}.s2{top:185px;right:7%;font-size:28px}.s3{top:25px;right:47%;font-size:14px}
+.scroll-note{position:absolute;bottom:28px;left:9%;font-size:9px;letter-spacing:2px;color:#91a69a;display:flex;align-items:center;gap:12px}.scroll-note span{height:1px;width:35px;background:var(--gold)}
+.quote-section{padding:60px 20px;background:#102f29;text-align:center;display:flex;align-items:center;justify-content:center;gap:28px;flex-wrap:wrap}.quote-section p{font-family:'Playfair Display';font-style:italic;font-size:clamp(18px,2.3vw,26px);color:#f0e7d5}.quote-section span:not(.quote-line){color:var(--gold);font-size:11px;letter-spacing:2px}.quote-line{width:35px;height:1px;background:#9c8257}
+.letter-section{padding:110px 20px 115px;text-align:center}.section-heading .eyebrow{justify-content:center}.section-heading h2{font-size:clamp(34px,4vw,48px);margin:18px 0 12px}.section-heading p{color:#b9c8bd;font-size:14px;line-height:1.7}
+.envelope-wrap{display:block;position:relative;width:280px;height:220px;margin:65px auto 18px;border:0;background:transparent;cursor:pointer;perspective:900px}.envelope-shadow{position:absolute;width:240px;height:25px;background:#061d17aa;filter:blur(15px);bottom:15px;left:20px;border-radius:50%}
+.envelope{position:absolute;width:250px;height:155px;left:15px;bottom:35px;display:block;filter:drop-shadow(0 18px 20px #071d1766);transition:transform .6s}.env-back{position:absolute;inset:0;background:#d7c5a3;border-radius:5px}.env-left,.env-right,.env-front{position:absolute;inset:0}.env-left{background:#e8d8b8;clip-path:polygon(0 0,50% 58%,0 100%)}.env-right{background:#d5bd96;clip-path:polygon(100% 0,50% 58%,100% 100%)}.env-front{background:#ead9b9;clip-path:polygon(0 100%,50% 42%,100% 100%);border-radius:0 0 5px 5px}.env-flap{position:absolute;inset:0;background:#c9ad7e;clip-path:polygon(0 0,100% 0,50% 62%);transform-origin:top;transition:transform .7s;z-index:3}.seal{position:absolute;z-index:4;left:calc(50% - 18px);top:72px;width:36px;height:36px;border-radius:50%;background:#9c594b;color:#f4dfbd;display:grid;place-items:center;font-size:20px;box-shadow:0 3px 8px #70443c66}
+.letter-peek{position:absolute;z-index:1;width:210px;height:135px;background:#fff9e9;left:35px;bottom:70px;color:#526b58;text-align:left;padding:20px;font-family:'Playfair Display';font-style:italic;transition:transform .7s;box-shadow:0 0 10px #071d1722}.mini-flower{float:right;color:#b67b65;font-size:25px}.tap-hint{position:absolute;top:0;left:0;right:0;color:var(--gold);font-size:10px;font-weight:700;letter-spacing:2px;animation:pulse 1.8s infinite}@keyframes pulse{50%{opacity:.45}}
+.envelope-wrap:hover .envelope{transform:translateY(-7px)}.envelope-wrap:hover .letter-peek{transform:translateY(-10px)}
+.under-envelope{color:#9db0a3;font-size:12px;letter-spacing:.5px}
+.closing{background:#102f29;text-align:center;padding:80px 20px 90px}.closing-flower{font-size:30px;color:var(--gold)}.closing h2{font-size:clamp(34px,4vw,48px);line-height:1.25;margin:18px 0}.closing p{max-width:500px;margin:0 auto;color:#b9c8bd;line-height:1.8;font-size:14px}.signature{margin-top:30px;font-family:'Playfair Display';font-style:italic;color:#e7d7b9}.signature span{color:#c78a7a;font-size:20px}
+footer{text-align:center;padding:22px;color:#849a8c;font-size:9px;letter-spacing:3px}footer span{color:var(--gold);padding:0 7px}
+.letter-overlay{position:fixed;inset:0;background:#071d17eF;z-index:10;display:flex;align-items:center;justify-content:center;padding:25px;opacity:0;visibility:hidden;transition:.35s;overflow-y:auto}.letter-overlay.show{opacity:1;visibility:visible}.overlay-close{position:fixed;right:30px;top:22px;border:1px solid #ffffff55;background:#ffffff12;color:white;width:42px;height:42px;border-radius:50%;font-size:27px;cursor:pointer;z-index:12}.letter-paper{position:relative;background:#fffaf0;color:var(--ink);width:min(620px,100%);padding:52px 60px 42px;box-shadow:0 25px 90px #0008;border:1px solid #dfd0b0;transform:translateY(25px) scale(.97);transition:.45s;max-height:90vh;overflow:auto}.show .letter-paper{transform:translateY(0) scale(1)}.letter-paper:before{content:"";position:absolute;inset:12px;border:1px solid #d9c7a2;pointer-events:none}.paper-decoration{text-align:center;color:#b58c55;font-size:23px;letter-spacing:5px}.paper-date{text-align:center;color:#a17c4c;font-size:9px;letter-spacing:2px;margin:18px 0}.letter-paper h2{text-align:center;font-size:34px;color:#315a49;margin-bottom:25px}.paper-body{font-family:'Playfair Display',serif;font-size:15px;line-height:1.9;color:#4a554b}.paper-body p{margin:0 0 14px}.paper-body .wish{text-align:center;color:#9c594b;font-weight:700;margin-top:22px}.paper-sign{text-align:right;font-family:'Playfair Display';font-style:italic;margin-top:28px;color:#315a49}.paper-sign span{color:#b77d70}.paper-bottom{text-align:center;color:#b58c55;font-size:9px;letter-spacing:3px;margin-top:30px}
+@media(max-width:760px){.topbar{height:70px;padding:0 5%}.hero{grid-template-columns:1fr;padding:65px 7% 80px;gap:0}.hero-copy{text-align:center}.hero-copy .eyebrow{justify-content:center}.intro{margin:auto}.hero-art{height:360px;margin-top:10px}.scroll-note{left:7%}.quote-section{gap:14px}.quote-line{width:20px}.letter-section{padding:85px 18px}.letter-paper{padding:45px 28px 35px}.letter-paper h2{font-size:29px}.paper-body{font-size:14px}.overlay-close{right:15px;top:12px}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important;animation:none!important;transition:none!important}}
+  </style>
+</head>
+<body>
+  <div class="ambient ambient-one"></div>
+  <div class="ambient ambient-two"></div>
+  <header class="topbar">
+    <a class="brand" href="#" aria-label="Trang chủ">
+      <span class="brand-mark">✿</span>
+      <span>GÓC TRI ÂN <small>20 · 11</small></span>
+    </a>
+    <button class="music-toggle" id="musicToggle" type="button" aria-pressed="false">
+      <span class="music-icon" id="musicIcon">♫</span>
+      <span id="musicLabel">Bật nhạc</span>
+      <span class="sound-bars" aria-hidden="true"><i></i><i></i><i></i></span>
+    </button>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="hero-copy">
+        <div class="eyebrow"><span></span> NGÀY NHÀ GIÁO VIỆT NAM <span></span></div>
+        <h1>Một đời <em>gieo chữ</em><br>ngàn đời <em>nở hoa</em></h1>
+        <p class="intro">Có những người lặng lẽ chắp cánh ước mơ, trao đi tri thức và thắp sáng tương lai. Hôm nay, xin gửi đến thầy cô tất cả sự kính trọng và lòng biết ơn.</p>
+        <a class="primary-link" href="#loi-chuc">Gửi lời tri ân <span>↓</span></a>
+      </div>
+      <div class="hero-art" aria-label="Minh họa bó hoa và sách">
+        <div class="art-glow"></div>
+        <div class="sun-disc"></div>
+        <div class="book book-back"></div>
+        <div class="book book-front"><span>TRI THỨC<br>LÀ ÁNH SÁNG</span></div>
+        <div class="stem stem-a"></div><div class="stem stem-b"></div><div class="stem stem-c"></div>
+        <div class="flower flower-a"><b></b></div>
+        <div class="flower flower-b"><b></b></div>
+        <div class="flower flower-c"><b></b></div>
+        <div class="leaf leaf-a"></div><div class="leaf leaf-b"></div><div class="leaf leaf-c"></div>
+        <div class="ribbon"></div>
+        <span class="art-caption">With gratitude, always.</span>
+        <span class="sparkle s1">✦</span><span class="sparkle s2">✧</span><span class="sparkle s3">✦</span>
+      </div>
+      <div class="scroll-note"><span></span> CUỘN XUỐNG ĐỂ KHÁM PHÁ</div>
+    </section>
+
+    <section class="quote-section">
+      <div class="quote-line"></div>
+      <p>“Dưới ánh mặt trời, không có nghề nào cao quý hơn nghề dạy học.”</p>
+      <span>— Comenius —</span>
+      <div class="quote-line"></div>
+    </section>
+
+    <section class="letter-section" id="loi-chuc">
+      <div class="section-heading">
+        <span class="eyebrow">MỘT ĐIỀU MUỐN NÓI</span>
+        <h2>Mở món quà <em>nhỏ</em> này nhé!</h2>
+        <p>Một lá thư được gói ghém bằng sự chân thành, dành riêng để gửi đến thầy cô.</p>
+      </div>
+
+      <button class="envelope-wrap" id="openLetter" type="button" aria-label="Mở bức thư chúc mừng">
+        <span class="tap-hint">CHẠM ĐỂ MỞ THƯ</span>
+        <span class="envelope-shadow"></span>
+        <span class="letter-peek"><span>Gửi thầy cô kính mến,</span><span class="mini-flower">✿</span></span>
+        <span class="envelope">
+          <span class="env-back"></span>
+          <span class="env-left"></span>
+          <span class="env-right"></span>
+          <span class="env-front"></span>
+          <span class="env-flap"></span>
+          <span class="seal">✿</span>
+        </span>
+      </button>
+
+      <p class="under-envelope">Một chút yêu thương, một lời cảm ơn thật nhiều.</p>
+    </section>
+
+    <section class="closing">
+      <div class="closing-flower">✿</div>
+      <h2>Kính chúc thầy cô<br><em>mãi giữ lửa yêu nghề</em></h2>
+      <p>Chúc thầy cô luôn mạnh khỏe, bình an và hạnh phúc trên hành trình gieo mầm tri thức.</p>
+      <div class="signature">Trân trọng và biết ơn <span>♡</span></div>
+    </section>
+  </main>
+
+  <footer>MADE WITH LOVE <span>✿</span> 20 · 11</footer>
+
+  <div class="letter-overlay" id="letterOverlay" aria-hidden="true">
+    <button class="overlay-close" id="closeLetter" type="button" aria-label="Đóng thư">×</button>
+    <article class="letter-paper" role="dialog" aria-modal="true" aria-labelledby="letterTitle">
+      <div class="paper-decoration">✿　❧　✿</div>
+      <div class="paper-date">NGÀY NHÀ GIÁO VIỆT NAM · 20/11</div>
+      <h2 id="letterTitle">Gửi thầy cô kính mến!</h2>
+      <div class="paper-body">
+        <p>Nhân ngày Nhà giáo Việt Nam 20/11, em xin gửi đến thầy cô những lời chúc tốt đẹp và chân thành nhất.</p>
+        <p>Em cảm ơn thầy cô vì đã luôn tận tâm dạy dỗ, kiên nhẫn chỉ bảo và truyền cho chúng em không chỉ kiến thức mà còn cả những bài học quý giá trong cuộc sống. Mỗi lời giảng, mỗi sự động viên và cả những lần nghiêm khắc của thầy cô đều giúp chúng em trưởng thành hơn từng ngày.</p>
+        <p>Em hiểu rằng phía sau mỗi bài học là biết bao tâm huyết và sự hi sinh thầm lặng. Dù mai này có đi đến đâu, em tin rằng những điều thầy cô đã dạy sẽ luôn là hành trang đáng quý trên con đường phía trước.</p>
+        <p>Kính chúc thầy cô thật nhiều sức khỏe, luôn vui vẻ, hạnh phúc và giữ mãi ngọn lửa đam mê với nghề. Mong rằng mỗi ngày đến trường của thầy cô đều là một ngày ngập tràn niềm vui.</p>
+        <p class="wish">Chúc mừng ngày Nhà giáo Việt Nam 20/11! 🌷</p>
+      </div>
+      <div class="paper-sign">Học trò của thầy cô <span>♡</span></div>
+      <div class="paper-bottom">✧ TRI ÂN ✧</div>
+    </article>
+  </div>
+
+  <script>
+// Mở và đóng lá thư
+const openButton = document.getElementById('openLetter');
+const closeButton = document.getElementById('closeLetter');
+const overlay = document.getElementById('letterOverlay');
+
+function openLetter() {
+  overlay.classList.add('show');
+  overlay.setAttribute('aria-hidden', 'false');
+  document.body.style.overflow = 'hidden';
+  closeButton.focus();
+}
+function closeLetter() {
+  overlay.classList.remove('show');
+  overlay.setAttribute('aria-hidden', 'true');
+  document.body.style.overflow = '';
+  openButton.focus();
+}
+openButton.addEventListener('click', openLetter);
+closeButton.addEventListener('click', closeLetter);
+overlay.addEventListener('click', (event) => {
+  if (event.target === overlay) closeLetter();
+});
+document.addEventListener('keydown', (event) => {
+  if (event.key === 'Escape' && overlay.classList.contains('show')) closeLetter();
+});
+
+// Nhạc nền nhẹ được tạo bằng Web Audio API, không cần tải file nhạc ngoài.
+const musicToggle = document.getElementById('musicToggle');
+const musicLabel = document.getElementById('musicLabel');
+const musicIcon = document.getElementById('musicIcon');
+let audioContext = null;
+let masterGain = null;
+let musicFilter = null;
+let musicTimer = null;
+let noteIndex = 0;
+let isPlaying = false;
+
+// Giai điệu ngắn, dịu nhẹ; mỗi nốt được phát bằng oscillator.
+// [tần số, thời lượng giây]
+const melody = [
+  [392.00, 0.42], [440.00, 0.42], [523.25, 0.62], [440.00, 0.42],
+  [392.00, 0.42], [329.63, 0.62], [349.23, 0.42], [392.00, 0.80],
+  [293.66, 0.42], [349.23, 0.42], [392.00, 0.62], [349.23, 0.42],
+  [329.63, 0.42], [293.66, 0.85]
+];
+const NOTE_GAP = 0.08;
+
+function ensureAudioGraph() {
+  const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+  if (!AudioContextClass) return false;
+  if (!audioContext) {
+    audioContext = new AudioContextClass();
+    musicFilter = audioContext.createBiquadFilter();
+    musicFilter.type = 'lowpass';
+    musicFilter.frequency.value = 1800;
+    musicFilter.Q.value = 0.4;
+    masterGain = audioContext.createGain();
+    masterGain.gain.value = 0.0;
+    musicFilter.connect(masterGain);
+    masterGain.connect(audioContext.destination);
+  }
+  if (audioContext.state === 'suspended') audioContext.resume();
+  // Mở volume từ từ để không bị "bụp" khi bật
+  masterGain.gain.cancelScheduledValues(audioContext.currentTime);
+  masterGain.gain.setTargetAtTime(0.35, audioContext.currentTime, 0.4);
+  return true;
+}
+
+function playNote(frequency, duration) {
+  if (!audioContext || !masterGain || !musicFilter) return;
+  const now = audioContext.currentTime + 0.02;
+  const oscillator = audioContext.createOscillator();
+  const volume = audioContext.createGain();
+  oscillator.type = 'triangle';
+  oscillator.frequency.setValueAtTime(frequency, now);
+
+  // Envelope mềm: attack nhẹ + release dài để hết rè / hết tiếng click
+  const peak = 0.12;
+  const attack = 0.07;
+  const release = 0.28;
+  const total = duration + release;
+  volume.gain.setValueAtTime(0.0001, now);
+  volume.gain.linearRampToValueAtTime(peak, now + attack);
+  volume.gain.setValueAtTime(peak, now + Math.max(attack, duration - 0.08));
+  volume.gain.exponentialRampToValueAtTime(0.0001, now + total);
+
+  oscillator.connect(volume);
+  volume.connect(musicFilter);
+  oscillator.start(now);
+  oscillator.stop(now + total + 0.05);
+}
+
+function scheduleNext() {
+  if (!isPlaying) return;
+  const [frequency, duration] = melody[noteIndex % melody.length];
+  playNote(frequency, duration);
+  noteIndex++;
+  // Nốt sau chờ nốt trước phát xong + một khoảng nghỉ nhỏ -> không chồng nốt gây rè
+  musicTimer = window.setTimeout(scheduleNext, (duration + NOTE_GAP) * 1000);
+}
+
+function startMusic() {
+  if (isPlaying) return;
+  if (!ensureAudioGraph()) {
+    musicLabel.textContent = 'Trình duyệt không hỗ trợ';
+    return;
+  }
+  isPlaying = true;
+  musicToggle.classList.add('playing');
+  musicToggle.setAttribute('aria-pressed', 'true');
+  musicLabel.textContent = 'Tắt nhạc';
+  musicIcon.textContent = '♫';
+  scheduleNext();
+}
+
+function stopMusic() {
+  isPlaying = false;
+  if (musicTimer) window.clearTimeout(musicTimer);
+  musicTimer = null;
+  if (masterGain && audioContext) {
+    // Giảm volume từ từ rồi mới dừng hẳn để không bị rè / bụp
+    masterGain.gain.setTargetAtTime(0.0, audioContext.currentTime, 0.12);
+  }
+  musicToggle.classList.remove('playing');
+  musicToggle.setAttribute('aria-pressed', 'false');
+  musicLabel.textContent = 'Bật nhạc';
+  musicIcon.textContent = '♫';
+}
+
+musicToggle.addEventListener('click', () => {
+  if (isPlaying) stopMusic();
+  else startMusic();
+});
+  </script>
+</body>
+</html>

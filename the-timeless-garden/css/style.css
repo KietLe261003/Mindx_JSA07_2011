@@ -1,0 +1,1206 @@
+:root {
+  --navy: #101B2D;
+  --gold: #D8B56D;
+  --ivory: #F4EBDD;
+  --rose: #C98E91;
+  --forest: #183D35;
+  --navy-deep: #09101C;
+  --glass: rgba(16, 27, 45, 0.68);
+  --border-gold: rgba(216, 181, 109, 0.32);
+
+  --font-display: 'Playfair Display', Georgia, serif;
+  --font-serif: 'Cormorant Garamond', Georgia, serif;
+  --font-sans: 'DM Sans', system-ui, -apple-system, sans-serif;
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  background-color: var(--navy);
+  color: var(--ivory);
+  font-family: var(--font-sans);
+  overflow-x: hidden;
+}
+
+body {
+  min-height: 100vh;
+  background: radial-gradient(circle at 50% 25%, #172b3a 0%, var(--navy) 55%, var(--navy-deep) 100%);
+  color: var(--ivory);
+  line-height: 1.65;
+  overflow-x: hidden;
+}
+
+/* Canvas & Con trỏ ánh sáng */
+#garden-canvas {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+}
+
+#cursor-light {
+  position: fixed;
+  width: 460px;
+  height: 460px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(216, 181, 109, 0.14) 0%, rgba(201, 142, 145, 0.05) 40%, transparent 70%);
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: 2;
+  transition: opacity 0.4s ease;
+}
+
+
+
+/* Điều khiển nổi */
+.floating-controls {
+  position: fixed;
+  top: 1.5rem;
+  right: 1.5rem;
+  z-index: 100;
+  display: flex;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.control-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.55rem 1.05rem;
+  border-radius: 999px;
+  border: 1px solid var(--border-gold);
+  background: rgba(16, 27, 45, 0.75);
+  backdrop-filter: blur(12px);
+  color: var(--ivory);
+  font-family: var(--font-sans);
+  font-size: 0.82rem;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  transition: border-color 0.3s ease, background 0.3s ease, transform 0.2s ease;
+}
+
+.control-pill:hover {
+  border-color: var(--gold);
+  background: rgba(24, 61, 53, 0.75);
+}
+
+.control-pill.gold {
+  background: linear-gradient(135deg, rgba(216, 181, 109, 0.25), rgba(201, 142, 145, 0.2));
+  border-color: var(--gold);
+}
+
+.pulse-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--rose);
+}
+
+.control-pill[aria-pressed="true"] .pulse-dot {
+  background: var(--gold);
+  box-shadow: 0 0 10px var(--gold);
+}
+
+/* MÀN HÌNH MỞ ĐẦU: THE FIRST LIGHT */
+.scene {
+  position: relative;
+  z-index: 5;
+}
+
+#scene-intro {
+  min-height: 100vh;
+  display: grid;
+  place-items: center;
+  padding: 2rem;
+  background: radial-gradient(circle at center, rgba(24, 61, 53, 0.22) 0%, #060a12 85%);
+  transition: opacity 1.4s cubic-bezier(0.22, 1, 0.36, 1), transform 1.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+#scene-intro.transitioning-out {
+  opacity: 0;
+  transform: scale(1.18);
+  pointer-events: none;
+}
+
+.intro-stage {
+  perspective: 1800px;
+  width: 100%;
+  max-width: 720px;
+  display: grid;
+  place-items: center;
+}
+
+.book-3d-wrapper {
+  position: relative;
+  width: min(460px, 88vw);
+  height: min(560px, 76vh);
+  transform-style: preserve-3d;
+}
+
+.book-glow {
+  position: absolute;
+  inset: -15%;
+  background: radial-gradient(circle, rgba(216, 181, 109, 0.35) 0%, transparent 68%);
+  opacity: 0;
+  transition: opacity 1.8s ease;
+  pointer-events: none;
+}
+
+.book-3d-wrapper.is-open .book-glow {
+  opacity: 1;
+}
+
+.book-3d {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+}
+
+.book-back,
+.book-page-right,
+.book-cover-front {
+  position: absolute;
+  inset: 0;
+  border-radius: 6px 18px 18px 6px;
+}
+
+.book-back {
+  background: #0d1624;
+  border: 1px solid var(--border-gold);
+  box-shadow: 0 30px 70px rgba(0, 0, 0, 0.75);
+}
+
+.book-page-right {
+  background: linear-gradient(145deg, #f8f1e5 0%, var(--ivory) 100%);
+  color: var(--navy);
+  padding: clamp(1.5rem, 4vw, 2.75rem);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  box-shadow: inset 18px 0 30px rgba(16, 27, 45, 0.14);
+}
+
+.page-inner .eyebrow {
+  font-size: 0.85rem;
+  letter-spacing: 0.25em;
+  color: var(--rose);
+  font-weight: 700;
+  margin-bottom: 1.2rem;
+}
+
+.type-text {
+  font-family: var(--font-serif);
+  font-size: clamp(1.2rem, 2.5vw, 1.48rem);
+  font-style: italic;
+  color: var(--navy);
+  min-height: 3.4em;
+  margin-bottom: 1rem;
+}
+
+#intro-title {
+  font-family: var(--font-display);
+  font-size: clamp(1.35rem, 3vw, 1.85rem);
+  line-height: 1.25;
+  color: #7c5822;
+  margin: 1rem 0 1.6rem;
+}
+
+.book-cover-front {
+  background: linear-gradient(135deg, #15253c 0%, var(--forest) 100%);
+  border: 1.5px solid var(--gold);
+  transform-origin: left center;
+  transition: transform 2.2s cubic-bezier(0.25, 1, 0.35, 1);
+  display: grid;
+  place-items: center;
+  backface-visibility: hidden;
+  box-shadow: 12px 15px 40px rgba(0, 0, 0, 0.65);
+}
+
+.book-3d-wrapper.is-open .book-cover-front {
+  transform: rotateY(-162deg);
+}
+
+.cover-ornament {
+  border: 1px solid rgba(216, 181, 109, 0.55);
+  padding: 2.5rem 2rem;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.cover-ornament span {
+  font-size: 0.85rem;
+  letter-spacing: 0.3em;
+  color: var(--ivory);
+}
+
+.cover-ornament strong {
+  font-family: var(--font-display);
+  font-size: 2.3rem;
+  letter-spacing: 0.12em;
+  color: var(--gold);
+}
+
+.cover-ornament small {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 1.1rem;
+  color: var(--rose);
+}
+
+.hidden-reveal {
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity 0.9s ease, transform 0.9s ease;
+  pointer-events: none;
+}
+
+.hidden-reveal.revealed {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+/* Nút nghệ thuật */
+.btn-editorial {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.95rem 1.8rem;
+  background: var(--navy);
+  color: var(--gold);
+  border: 1px solid var(--gold);
+  border-radius: 999px;
+  font-family: var(--font-sans);
+  font-size: 0.88rem;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  cursor: pointer;
+  transition: background 0.35s ease, color 0.35s ease, box-shadow 0.35s ease;
+}
+
+.btn-editorial:hover {
+  background: var(--gold);
+  color: var(--navy);
+  box-shadow: 0 0 28px rgba(216, 181, 109, 0.45);
+}
+
+/* KHÔNG GIAN CHÍNH: THE TIMELESS GARDEN */
+#scene-garden {
+  opacity: 0;
+  transition: opacity 1.5s ease;
+}
+
+#scene-garden.visible {
+  opacity: 1;
+}
+
+.sunbeams {
+  position: fixed;
+  top: -20%;
+  left: 15%;
+  width: 70vw;
+  height: 90vh;
+  background: conic-gradient(from 150deg at 50% 0%, transparent 0deg, rgba(216, 181, 109, 0.08) 25deg, transparent 50deg, rgba(244, 235, 221, 0.06) 75deg, transparent 105deg);
+  filter: blur(28px);
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* Điều hướng chấm tròn bên phải */
+.chapter-dots {
+  position: fixed;
+  right: 1.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 90;
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+}
+
+.chapter-dots .dot {
+  position: relative;
+  width: 11px;
+  height: 11px;
+  border-radius: 50%;
+  border: 1px solid var(--gold);
+  background: transparent;
+  cursor: pointer;
+  transition: transform 0.3s ease, background 0.3s ease;
+}
+
+.chapter-dots .dot.active,
+.chapter-dots .dot:hover {
+  background: var(--gold);
+  transform: scale(1.3);
+}
+
+.chapter-dots .dot span {
+  position: absolute;
+  right: 22px;
+  top: 50%;
+  transform: translateY(-50%);
+  white-space: nowrap;
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  color: var(--ivory);
+  background: rgba(16, 27, 45, 0.85);
+  padding: 0.25rem 0.65rem;
+  border-radius: 999px;
+  border: 1px solid var(--border-gold);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+}
+
+.chapter-dots .dot:hover span {
+  opacity: 1;
+}
+
+/* Các phân cảnh chung */
+.garden-chapter {
+  min-height: 100vh;
+  padding: clamp(5rem, 10vh, 7rem) clamp(1.25rem, 6vw, 5rem);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.chapter-header {
+  text-align: center;
+  max-width: 680px;
+  margin-bottom: 3rem;
+}
+
+.chapter-num {
+  display: inline-block;
+  font-size: 0.78rem;
+  letter-spacing: 0.28em;
+  color: var(--gold);
+  margin-bottom: 0.65rem;
+}
+
+.chapter-header h2 {
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 4.5vw, 3.3rem);
+  font-weight: 500;
+  color: var(--ivory);
+  margin-bottom: 0.85rem;
+}
+
+.chapter-header p {
+  font-family: var(--font-serif);
+  font-size: clamp(1.1rem, 2vw, 1.35rem);
+  color: rgba(244, 235, 221, 0.82);
+}
+
+/* PHÂN CẢNH 1: CÂY CỔ THỤ TRI ÂN */
+.tree-sanctuary {
+  position: relative;
+  width: min(820px, 95vw);
+  aspect-ratio: 800 / 620;
+  display: grid;
+  place-items: center;
+}
+
+.ancient-tree-svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.leaves-layer {
+  position: absolute;
+  inset: 0;
+}
+
+.glow-leaf {
+  position: absolute;
+  width: 34px;
+  height: 22px;
+  border-radius: 2px 22px 2px 22px;
+  background: radial-gradient(circle at 30% 30%, #fff6d6, var(--gold) 65%, var(--forest));
+  border: 1px solid rgba(255, 255, 255, 0.5);
+  box-shadow: 0 0 18px rgba(216, 181, 109, 0.75);
+  cursor: pointer;
+  transform: translate(-50%, -50%) rotate(var(--rot, -20deg));
+  transition: transform 0.35s ease, box-shadow 0.35s ease;
+}
+
+.glow-leaf:hover,
+.glow-leaf:focus-visible {
+  transform: translate(-50%, -50%) scale(1.38) rotate(0deg);
+  box-shadow: 0 0 30px #fff2c2, 0 0 50px var(--gold);
+  z-index: 10;
+}
+
+.leaf-whisper {
+  position: absolute;
+  top: 4%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(16, 27, 45, 0.88);
+  border: 1px solid var(--gold);
+  padding: 0.75rem 1.5rem;
+  border-radius: 999px;
+  font-family: var(--font-serif);
+  font-size: clamp(1.05rem, 2vw, 1.3rem);
+  font-style: italic;
+  color: var(--gold);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.35s ease, transform 0.35s ease;
+  text-align: center;
+  max-width: 90%;
+  z-index: 15;
+}
+
+.leaf-whisper.active {
+  opacity: 1;
+  transform: translate(-50%, -6px);
+}
+
+/* Modal thiệp lá rơi */
+.editorial-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: grid;
+  place-items: center;
+  padding: 1.5rem;
+}
+
+.editorial-modal[hidden] {
+  display: none;
+}
+
+.modal-backdrop {
+  position: absolute;
+  inset: 0;
+  background: rgba(9, 16, 28, 0.82);
+  backdrop-filter: blur(8px);
+}
+
+.leaf-card-sheet {
+  position: relative;
+  z-index: 2;
+  max-width: 520px;
+  width: 100%;
+  background: linear-gradient(160deg, var(--ivory), #eadbc4);
+  color: var(--navy);
+  padding: 3rem 2.25rem;
+  border-radius: 20px;
+  border: 2px solid var(--gold);
+  text-align: center;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.65);
+  animation: leafCardArrive 0.65s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.leaf-emblem {
+  font-size: 2rem;
+  color: var(--gold);
+  margin-bottom: 0.5rem;
+}
+
+.card-tag {
+  font-size: 0.75rem;
+  letter-spacing: 0.24em;
+  color: var(--forest);
+  font-weight: 700;
+  margin-bottom: 1.2rem;
+}
+
+.leaf-card-sheet blockquote {
+  font-family: var(--font-display);
+  font-size: clamp(1.35rem, 3vw, 1.75rem);
+  line-height: 1.45;
+  color: var(--navy);
+  margin-bottom: 1rem;
+}
+
+.card-subtext {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 1.15rem;
+  color: #4a3f35;
+}
+
+.modal-close {
+  position: absolute;
+  top: 1rem;
+  right: 1.2rem;
+  background: none;
+  border: none;
+  font-size: 1.8rem;
+  color: inherit;
+  cursor: pointer;
+  line-height: 1;
+}
+
+/* PHÂN CẢNH 2: BA CÁNH CỔNG KÝ ỨC */
+.portals-stage {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 2.2rem;
+  width: 100%;
+  max-width: 1040px;
+}
+
+.portal-gateway {
+  position: relative;
+  min-height: 360px;
+  padding: 2.5rem 1.8rem;
+  background: linear-gradient(180deg, rgba(24, 61, 53, 0.42), rgba(16, 27, 45, 0.85));
+  border: 1px solid var(--border-gold);
+  color: var(--ivory);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  cursor: pointer;
+  overflow: hidden;
+  transition: transform 0.45s ease, border-color 0.45s ease, box-shadow 0.45s ease;
+}
+
+/* Hình dáng riêng biệt cho từng cổng - không dùng card chữ nhật thông thường */
+.portal-arch {
+  border-radius: 180px 180px 24px 24px;
+}
+
+.portal-oval {
+  border-radius: 50% / 38%;
+}
+
+.portal-star {
+  clip-path: polygon(50% 0%, 95% 22%, 100% 78%, 50% 100%, 0% 78%, 5% 22%);
+  border-radius: 0;
+}
+
+.portal-gateway:hover {
+  transform: translateY(-10px);
+  border-color: var(--gold);
+  box-shadow: 0 24px 60px rgba(216, 181, 109, 0.22);
+}
+
+.portal-index {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 1.2rem;
+  color: var(--gold);
+  margin-bottom: 0.75rem;
+}
+
+.portal-gateway h3 {
+  font-family: var(--font-display);
+  font-size: 1.45rem;
+  letter-spacing: 0.08em;
+  margin-bottom: 0.5rem;
+}
+
+.portal-gateway p {
+  font-family: var(--font-serif);
+  font-size: 1.15rem;
+  color: var(--rose);
+  margin-bottom: 1.4rem;
+}
+
+.portal-cta {
+  font-size: 0.82rem;
+  letter-spacing: 0.12em;
+  color: var(--gold);
+}
+
+/* Portal Viewer */
+.portal-viewer {
+  position: fixed;
+  inset: 0;
+  z-index: 210;
+  background: rgba(9, 16, 28, 0.92);
+  backdrop-filter: blur(14px);
+  display: grid;
+  place-items: center;
+  padding: 1.5rem;
+}
+
+.portal-viewer[hidden] {
+  display: none;
+}
+
+.portal-viewer-inner {
+  position: relative;
+  width: min(920px, 95vw);
+  max-height: 90vh;
+  overflow-y: auto;
+  background: var(--navy);
+  border: 1px solid var(--gold);
+  border-radius: 24px;
+  padding: clamp(1.5rem, 4vw, 3rem);
+  color: var(--ivory);
+}
+
+/* Cổng 1: Bảng đen lớp học */
+.chalkboard-scene {
+  position: relative;
+  padding: 1rem 0;
+}
+
+.sunlight-beam {
+  position: absolute;
+  top: -20px;
+  right: 10%;
+  width: 240px;
+  height: 320px;
+  background: linear-gradient(180deg, rgba(216, 181, 109, 0.22), transparent);
+  transform: rotate(22deg);
+  pointer-events: none;
+}
+
+.chalkboard {
+  background: radial-gradient(circle at center, #1e463d, #122b25);
+  border: 12px solid #593d28;
+  border-radius: 10px;
+  padding: clamp(1.8rem, 5vw, 3.5rem);
+  min-height: 290px;
+  box-shadow: inset 0 0 45px rgba(0, 0, 0, 0.65);
+  position: relative;
+}
+
+.chalk-date {
+  display: block;
+  text-align: right;
+  font-family: var(--font-serif);
+  font-style: italic;
+  color: rgba(244, 235, 221, 0.7);
+  margin-bottom: 1.5rem;
+}
+
+.handwriting-chalk {
+  font-family: var(--font-serif);
+  font-size: clamp(1.4rem, 3.2vw, 2.1rem);
+  font-style: italic;
+  line-height: 1.6;
+  color: #f7f3eb;
+  text-shadow: 0 0 4px rgba(255, 255, 255, 0.35);
+}
+
+.chalk-tray {
+  position: absolute;
+  bottom: 10px;
+  left: 24px;
+  display: flex;
+  gap: 10px;
+}
+
+.chalk-piece {
+  width: 34px;
+  height: 6px;
+  background: #f4ebdd;
+  border-radius: 3px;
+}
+
+.chalk-piece.short {
+  width: 18px;
+  background: var(--rose);
+}
+
+/* Cổng 2: Polaroid Gallery */
+.polaroid-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.8rem;
+}
+
+.upload-memory-btn {
+  padding: 0.55rem 1.1rem;
+  border: 1px dashed var(--gold);
+  border-radius: 999px;
+  color: var(--gold);
+  font-size: 0.85rem;
+  cursor: pointer;
+}
+
+.polaroid-gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 1.6rem;
+  perspective: 1000px;
+}
+
+.polaroid-item {
+  background: #faf5ec;
+  color: var(--navy);
+  padding: 0.85rem 0.85rem 1.6rem;
+  border-radius: 4px;
+  box-shadow: 0 18px 36px rgba(0, 0, 0, 0.45);
+  cursor: pointer;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  text-align: center;
+}
+
+.polaroid-item img,
+.polaroid-art {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  object-fit: cover;
+  border-radius: 2px;
+  margin-bottom: 0.75rem;
+  display: grid;
+  place-items: center;
+}
+
+.polaroid-item span {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-size: 1.05rem;
+}
+
+.polaroid-active-note {
+  margin-top: 1.8rem;
+  text-align: center;
+  font-family: var(--font-serif);
+  font-size: 1.35rem;
+  font-style: italic;
+  color: var(--gold);
+  min-height: 2.2em;
+}
+
+/* Cổng 3: Chòm sao quyển sách */
+.constellation-cosmos {
+  text-align: center;
+  padding: 1rem 0;
+}
+
+#book-constellation-svg {
+  width: min(560px, 90vw);
+  margin: 0 auto 1.5rem;
+}
+
+.constellation-lines path {
+  fill: none;
+  stroke: var(--gold);
+  stroke-width: 1.6;
+  stroke-dasharray: 600;
+  stroke-dashoffset: 600;
+  animation: drawConstellation 3s ease forwards;
+}
+
+.constellation-stars circle {
+  fill: #fff7df;
+  filter: drop-shadow(0 0 6px var(--gold));
+}
+
+.cosmos-quote {
+  font-family: var(--font-display);
+  font-size: clamp(1.25rem, 2.8vw, 1.7rem);
+  color: var(--ivory);
+  max-width: 640px;
+  margin: 0 auto;
+}
+
+/* PHÂN CẢNH 3: CUỐN SỔ TAY TRI ÂN */
+.notebook-stage {
+  width: 100%;
+  max-width: 940px;
+}
+
+.open-notebook {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  background: var(--ivory);
+  color: var(--navy);
+  border-radius: 14px;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.65);
+  overflow: hidden;
+  border: 2px solid var(--gold);
+}
+
+.notebook-spine {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 50%;
+  width: 24px;
+  transform: translateX(-50%);
+  background: linear-gradient(90deg, rgba(16, 27, 45, 0.08), rgba(16, 27, 45, 0.22), rgba(16, 27, 45, 0.08));
+  pointer-events: none;
+}
+
+.notebook-page {
+  padding: clamp(1.6rem, 4vw, 2.8rem);
+  display: flex;
+  flex-direction: column;
+  gap: 1.15rem;
+}
+
+.page-label {
+  font-size: 0.74rem;
+  letter-spacing: 0.24em;
+  color: var(--forest);
+  font-weight: 700;
+}
+
+.ink-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.ink-field label {
+  font-family: var(--font-serif);
+  font-size: 1.05rem;
+  font-weight: 600;
+}
+
+.ink-field input,
+.notebook-page textarea {
+  width: 100%;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid rgba(16, 27, 45, 0.28);
+  padding: 0.55rem 0.2rem;
+  font-family: var(--font-serif);
+  font-size: 1.2rem;
+  color: var(--navy);
+  outline: none;
+}
+
+.notebook-page textarea {
+  border: 1px dashed rgba(16, 27, 45, 0.25);
+  border-radius: 8px;
+  padding: 0.85rem;
+  resize: vertical;
+  background-image: repeating-linear-gradient(transparent, transparent 31px, rgba(16, 27, 45, 0.08) 32px);
+  line-height: 32px;
+}
+
+.style-selectors {
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+  margin-top: 0.5rem;
+}
+
+.selector-group span {
+  display: block;
+  font-size: 0.82rem;
+  font-weight: 700;
+  margin-bottom: 0.45rem;
+}
+
+.pill-options {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+.style-chip {
+  padding: 0.35rem 0.75rem;
+  border-radius: 999px;
+  border: 1px solid rgba(16, 27, 45, 0.3);
+  background: transparent;
+  font-size: 0.78rem;
+  cursor: pointer;
+}
+
+.style-chip.active {
+  background: var(--navy);
+  color: var(--gold);
+  border-color: var(--navy);
+}
+
+.ink-swatches {
+  display: flex;
+  gap: 0.65rem;
+}
+
+.swatch {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  cursor: pointer;
+}
+
+.swatch.active {
+  border-color: var(--gold);
+  transform: scale(1.18);
+}
+
+/* Tấm thiệp hoàn chỉnh */
+.completed-card-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.5rem;
+}
+
+.completed-card-wrapper[hidden] {
+  display: none;
+}
+
+.greeting-card-artifact {
+  width: min(620px, 94vw);
+  padding: clamp(1.5rem, 4vw, 2.6rem);
+  border-radius: 18px;
+  box-shadow: 0 0 60px rgba(216, 181, 109, 0.35);
+  transition: all 0.5s ease;
+}
+
+.greeting-card-artifact.style-ivory {
+  background: linear-gradient(145deg, #fbf6ed, #ede0cb);
+  color: var(--navy);
+}
+
+.greeting-card-artifact.style-navy {
+  background: linear-gradient(145deg, #132238, #0c1524);
+  color: var(--ivory);
+}
+
+.greeting-card-artifact.style-rose {
+  background: linear-gradient(145deg, #f9ecec, #edd3d5);
+  color: #3a1d22;
+}
+
+.card-border-ornament {
+  border: 1.5px solid var(--gold);
+  border-radius: 12px;
+  padding: clamp(1.4rem, 3.5vw, 2.2rem);
+}
+
+.card-date {
+  font-size: 0.75rem;
+  letter-spacing: 0.25em;
+  color: var(--gold);
+  margin-bottom: 1.2rem;
+}
+
+.card-salutation {
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+  margin-bottom: 1rem;
+}
+
+.card-handwritten-body {
+  font-family: var(--font-serif);
+  font-size: clamp(1.2rem, 2.5vw, 1.45rem);
+  font-style: italic;
+  line-height: 1.7;
+  margin-bottom: 1.5rem;
+  white-space: pre-line;
+}
+
+.card-signoff {
+  font-family: var(--font-serif);
+  font-size: 1.15rem;
+  text-align: right;
+}
+
+.card-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.75rem;
+}
+
+.feedback-toast {
+  color: var(--gold);
+  font-size: 0.9rem;
+  min-height: 1.4em;
+}
+
+/* PHÂN CẢNH 4: ĐÓA HOA BẤT NGỜ */
+.bloom-sanctuary {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2.5rem;
+  min-height: 440px;
+}
+
+.magic-flower {
+  position: relative;
+  width: 220px;
+  height: 220px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+}
+
+.flower-halo {
+  position: absolute;
+  inset: -20%;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(216, 181, 109, 0.35), transparent 70%);
+  transition: transform 1.2s ease, opacity 1.2s ease;
+}
+
+.flower-core {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #fff8dc, var(--gold));
+  box-shadow: 0 0 25px var(--gold);
+  z-index: 5;
+}
+
+.petal {
+  position: absolute;
+  width: 64px;
+  height: 105px;
+  border-radius: 50% 50% 50% 50% / 70% 70% 30% 30%;
+  transform-origin: bottom center;
+  bottom: 50%;
+  transition: transform 1.4s cubic-bezier(0.22, 1, 0.36, 1), opacity 1.2s ease;
+}
+
+.petal.outer {
+  background: linear-gradient(180deg, var(--rose), #8f565b);
+  border: 1px solid rgba(216, 181, 109, 0.45);
+  transform: rotate(var(--ang)) scaleY(0.55);
+}
+
+.petal.inner {
+  width: 48px;
+  height: 82px;
+  background: linear-gradient(180deg, #f5dec9, var(--gold));
+  transform: rotate(var(--ang)) scaleY(0.45);
+  z-index: 3;
+}
+
+.p1, .p7 { --ang: 0deg; }
+.p2, .p8 { --ang: 60deg; }
+.p3, .p9 { --ang: 120deg; }
+.p4, .p10 { --ang: 180deg; }
+.p5, .p11 { --ang: 240deg; }
+.p6, .p12 { --ang: 300deg; }
+
+.magic-flower.is-bloomed .petal.outer {
+  transform: rotate(var(--ang)) translateY(-18px) scaleY(1.08);
+}
+
+.magic-flower.is-bloomed .petal.inner {
+  transform: rotate(calc(var(--ang) + 30deg)) translateY(-10px) scaleY(1);
+}
+
+.magic-flower.is-bloomed .flower-halo {
+  transform: scale(1.7);
+}
+
+.flower-hint {
+  position: absolute;
+  bottom: -34px;
+  font-size: 0.85rem;
+  letter-spacing: 0.14em;
+  color: var(--gold);
+  white-space: nowrap;
+}
+
+.bloom-revelation {
+  max-width: 740px;
+  text-align: center;
+  animation: fadeUpSlow 1.2s ease forwards;
+}
+
+.bloom-revelation[hidden] {
+  display: none;
+}
+
+.bloom-quote {
+  font-family: var(--font-serif);
+  font-size: clamp(1.25rem, 2.6vw, 1.65rem);
+  font-style: italic;
+  color: var(--ivory);
+  margin-bottom: 1.2rem;
+}
+
+.bloom-headline {
+  font-family: var(--font-display);
+  font-size: clamp(1.4rem, 3.2vw, 2.2rem);
+  color: var(--gold);
+  letter-spacing: 0.04em;
+}
+
+/* PHẦN KẾT: A LETTER TO THE FUTURE */
+.finale-stage {
+  text-align: center;
+  background: radial-gradient(circle at 50% 60%, rgba(24, 61, 53, 0.35), transparent 72%);
+}
+
+.constellation-2011 svg {
+  width: min(500px, 90vw);
+  height: auto;
+}
+
+.star-numerals {
+  font-family: var(--font-display);
+  font-size: 96px;
+  fill: none;
+  stroke: var(--gold);
+  stroke-width: 1.5;
+  stroke-dasharray: 420;
+  stroke-dashoffset: 0;
+  filter: drop-shadow(0 0 12px rgba(216, 181, 109, 0.65));
+}
+
+.future-letter {
+  max-width: 680px;
+  background: rgba(16, 27, 45, 0.72);
+  border: 1px solid var(--border-gold);
+  border-radius: 24px;
+  padding: clamp(2rem, 5vw, 3.5rem);
+  backdrop-filter: blur(12px);
+}
+
+.letter-body {
+  font-family: var(--font-serif);
+  font-size: clamp(1.2rem, 2.4vw, 1.48rem);
+  line-height: 1.85;
+  margin: 1.2rem 0 2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.9rem;
+}
+
+.finale-signature {
+  font-family: var(--font-display);
+  font-size: clamp(1.2rem, 2.8vw, 1.75rem);
+  color: var(--gold);
+  letter-spacing: 0.1em;
+  margin-bottom: 2rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .open-notebook {
+    grid-template-columns: 1fr;
+  }
+  .notebook-spine {
+    display: none;
+  }
+  .chapter-dots {
+    display: none;
+  }
+  #cursor-light {
+    display: none;
+  }
+}
